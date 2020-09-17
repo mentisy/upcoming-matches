@@ -1,0 +1,31 @@
+{
+    "name": "avolle/weekly-matches",
+    "description": "Generates an image of upcoming matches, with customized team name and logo",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alexander Volle",
+            "email": "weekly.matches@avolle.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Avolle\\WeeklyMatches\\": "src"
+        }
+    },
+    "require": {
+        "php": "7.4.*",
+        "ext-imagick": "*",
+        "filp/whoops": "^2.7",
+        "guzzlehttp/guzzle": "^7.0",
+        "phpoffice/phpspreadsheet": "^1.14",
+        "cakephp/collection": "^4.1",
+        "cakephp/chronos": "^2.0",
+        "symfony/cache": "^5.1",
+        "monolog/monolog": "^2.1"
+    },
+    "require-dev": {
+        "symfony/var-dumper": "^5.1"
+    }
+}
