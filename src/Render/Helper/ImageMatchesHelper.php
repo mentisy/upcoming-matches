@@ -132,11 +132,8 @@ class ImageMatchesHelper
      */
     private function willWholeDayFit(int $matchCount): bool
     {
-        // Calculate necessary pixels to fit day header and all matches inside the allocated grid.
         $requiredPixels = $matchCount * self::MATCH_SPACING_Y;
 
-        // If required space is above the available space, then render the day on another column.if
-        // Gjør matte for å sjekke om NÅVÆRENDE Y + alle kampene < MATCH_GRID_Y_END.
         return $this->y + $requiredPixels <= $this->allottedSpaceY;
     }
 
