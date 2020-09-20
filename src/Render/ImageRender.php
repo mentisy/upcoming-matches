@@ -17,6 +17,8 @@ class ImageRender implements RenderInterface
 
     private ImagickDraw $teamText;
 
+    const BACKGROUND_COLOR = '#E81B22';
+
     const IMAGE_INITIAL_WIDTH = 1400;
     const IMAGE_HEIGHT = 807;
 
@@ -68,7 +70,7 @@ class ImageRender implements RenderInterface
     private function init()
     {
         $this->imagick = new Imagick();
-        $this->imagick->newImage($this->imageWidth, self::IMAGE_HEIGHT, "#E81B22", 'png');
+        $this->imagick->newImage($this->imageWidth, self::IMAGE_HEIGHT, self::BACKGROUND_COLOR, 'png');
 
         $this->teamText = new ImagickDraw();
         $this->teamText->setFont(FONTS . 'Roboto-Bold.ttf');

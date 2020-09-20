@@ -15,6 +15,8 @@ use ImagickPixel;
  */
 class ImageMatchesHelper
 {
+    const BACKGROUND_COLOR = '#E81B22';
+
     const DAY_FONT_SIZE = 18;
     const MATCH_FONT_SIZE = 14;
 
@@ -37,7 +39,8 @@ class ImageMatchesHelper
     private Imagick $image;
     private ImagickDraw $dayText;
     private ImagickDraw $matchText;
-    private ImagickDraw $shadowText;
+    private ImagickDraw $dayShadowText;
+    private ImagickDraw $matchShadowText;
 
     private int $x;
     private int $y;
@@ -58,19 +61,26 @@ class ImageMatchesHelper
 
         $this->dayText = new ImagickDraw();
         $this->dayText->setFillColor(new ImagickPixel('#FFFFFF'));
+        $this->dayText->setFontWeight(600);
         $this->dayText->setFontSize(self::DAY_FONT_SIZE);
-        $this->dayText->setFont(FONTS . 'Roboto-Regular.ttf');
+
+        $this->dayShadowText = new ImagickDraw();
+        $this->dayShadowText->setFontSize(self::DAY_FONT_SIZE);
+        $this->dayShadowText->setFontWeight(600);
+        $this->dayShadowText->setFillColor(new ImagickPixel('rgb(50,50,50'));
 
         $this->matchText = new ImagickDraw();
         $this->matchText->setFontSize(self::MATCH_FONT_SIZE);
+        $this->matchText->setFontWeight(600);
         $this->matchText->setFillColor(new ImagickPixel("#FFFFFF"));
 
-        $this->shadowText = new ImagickDraw();
-        $this->shadowText->setFontSize(self::MATCH_FONT_SIZE);
-        $this->shadowText->setFillColor(new ImagickPixel("rgb(132,132,132)"));
+        $this->matchShadowText = new ImagickDraw();
+        $this->matchShadowText->setFontSize(self::MATCH_FONT_SIZE);
+        $this->matchShadowText->setFontWeight(600);
+        $this->matchShadowText->setFillColor(new ImagickPixel("rgb(50,50,50)"));
 
         $this->image = new Imagick();
-        $this->image->newImage($imageWidth, $imageHeight, "#E81B22", 'png');
+        $this->image->newImage($imageWidth, $imageHeight, self::BACKGROUND_COLOR, 'png');
     }
 
     /*
@@ -102,6 +112,7 @@ class ImageMatchesHelper
             $this->startNewColumn();
         }
 
+        $this->image->annotateImage($this->dayShadowText, $this->x + 1, $this->y + 1, 0, ucfirst($day));
         $this->image->annotateImage($this->dayText, $this->x, $this->y, 0, ucfirst($day));
         $this->y += 25; // Spacing between day header and the first match of the day
         $this->incrementRequiredHeight(25);
@@ -121,6 +132,7 @@ class ImageMatchesHelper
         $this->maxStringWidth = max([$this->maxStringWidth, (strlen($text) * self::MATCH_FONT_SIZE / 2)]);
         $this->maxStringWidthCurrent = max([$this->maxStringWidthCurrent, (strlen($text) * self::MATCH_FONT_SIZE / 2)]);
 
+        $this->image->annotateImage($this->matchShadowText, $this->x + 1, $this->y + 1, 0, $text);
         $this->image->annotateImage($this->matchText, $this->x, $this->y, 0, $text);
         $this->y += self::MATCH_SPACING_Y;
         $this->incrementRequiredHeight(self::MATCH_SPACING_Y);
