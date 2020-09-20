@@ -8,6 +8,11 @@ use Imagick;
 use ImagickDraw;
 use ImagickPixel;
 
+/**
+ * Class ImageMatchesHelper
+ *
+ * @package Avolle\WeeklyMatches\Render\Helper
+ */
 class ImageMatchesHelper
 {
     const DAY_FONT_SIZE = 18;
@@ -40,8 +45,12 @@ class ImageMatchesHelper
     private int $imageHeight;
     private int $allottedSpaceY;
 
-    public function __construct(CollectionInterface $matchesCollection, int $imageWidth, int $imageHeight, int $allotedSpaceY)
-    {
+    public function __construct(
+        CollectionInterface $matchesCollection,
+        int $imageWidth,
+        int $imageHeight,
+        int $allotedSpaceY
+    ) {
         $this->matchesCollection = $matchesCollection;
         $this->imageWidth = $imageWidth;
         $this->imageHeight = $imageHeight;
@@ -64,6 +73,12 @@ class ImageMatchesHelper
         $this->image->newImage($imageWidth, $imageHeight, "#E81B22", 'png');
     }
 
+    /*
+     * Will render all days and their matches
+     * Initiates the x and y coordinates
+     *
+     * Returns the rendered imge
+     */
     public function renderMatches(): Imagick
     {
         $this->x = self::IMAGE_START_X;
@@ -77,14 +92,14 @@ class ImageMatchesHelper
         return $this->image;
     }
 
-    private function renderDay($day, $matches)
+    /*
+     * Will render a day, including matches for that day, onto the canvas
+     * Checks whether the whole day (with matches) will fit into the current column, otherwise start a new column
+     */
+    private function renderDay($day, $matches): void
     {
         if (!$this->willWholeDayFit(count($matches))) {
-            $this->x += self::DAY_SPACING_X + $this->maxStringWidthCurrent;
-            $this->y = self::IMAGE_START_Y;
-            $this->incrementRequiredWidth(self::DAY_SPACING_X + $this->maxStringWidthCurrent);
-            $this->incrementRequiredHeight($this->y);
-            $this->maxStringWidthCurrent = 0;
+            $this->startNewColumn();
         }
 
         $this->image->annotateImage($this->dayText, $this->x, $this->y, 0, ucfirst($day));
@@ -95,7 +110,12 @@ class ImageMatchesHelper
         }
     }
 
-    private function renderMatch(Match $match)
+    /*
+     * Will render a match onto the canvas, using the current x and y coordinates.
+     * Will also check for the longest string width, so that can be added to required width when cropping the image
+     * Adds onto the required height property
+     */
+    private function renderMatch(Match $match): void
     {
         $text = sprintf("%s: %s - %s (%s)", $match->time, $match->homeTeam, $match->awayTeam, $match->tournament);
         $this->maxStringWidth = max([$this->maxStringWidth, (strlen($text) * self::MATCH_FONT_SIZE / 2)]);
@@ -106,6 +126,10 @@ class ImageMatchesHelper
         $this->incrementRequiredHeight(self::MATCH_SPACING_Y);
     }
 
+    /*
+     * Calculate whether the whole day will fit into the current column.
+     * If not start a new column of days and increment the required width property
+     */
     private function willWholeDayFit(int $matchCount): bool
     {
         // Calculate necessary pixels to fit day header and all matches inside the allocated grid.
@@ -116,7 +140,25 @@ class ImageMatchesHelper
         return $this->y + $requiredPixels <= $this->allottedSpaceY;
     }
 
-    private function incrementRequiredWidth(int $increment)
+    /*
+     * Will start a new column in which the next days will be rendered onto
+     * Adds onto the required width of the entire canvas
+     */
+    private function startNewColumn(): void
+    {
+        $this->x += self::DAY_SPACING_X + $this->maxStringWidthCurrent;
+        $this->y = self::IMAGE_START_Y;
+        $this->incrementRequiredWidth(self::DAY_SPACING_X + $this->maxStringWidthCurrent);
+        $this->incrementRequiredHeight($this->y);
+        $this->maxStringWidthCurrent = 0;
+    }
+
+    /*
+     * Add onto the necessary width of the entire canvas
+     * If the required width is larger than the image width,
+     * override that that with the image width property
+     */
+    private function incrementRequiredWidth(int $increment): void
     {
         $this->requiredWidth += $increment;
 
@@ -125,7 +167,12 @@ class ImageMatchesHelper
         }
     }
 
-    private function incrementRequiredHeight(int $increment)
+    /*
+     * Add onto the necessary height of the entire canvas
+     * If the required height is larger than the allotted space,
+     * override that that with the allotted space property
+     */
+    private function incrementRequiredHeight(int $increment): void
     {
         $this->requiredHeight += $increment;
 
@@ -135,6 +182,8 @@ class ImageMatchesHelper
     }
 
     /**
+     * Get the required image width, which is the required width + the width of the longest string
+     *
      * @return float|int
      */
     public function getRequiredWidth()
@@ -143,6 +192,8 @@ class ImageMatchesHelper
     }
 
     /**
+     * Get the required image height
+     *
      * @return float|int
      */
     public function getRequiredHeight()
