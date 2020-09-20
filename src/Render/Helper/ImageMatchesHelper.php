@@ -38,14 +38,14 @@ class ImageMatchesHelper
     private int $y;
     private int $imageWidth;
     private int $imageHeight;
-    private int $allotedSpaceY;
+    private int $allottedSpaceY;
 
     public function __construct(CollectionInterface $matchesCollection, int $imageWidth, int $imageHeight, int $allotedSpaceY)
     {
         $this->matchesCollection = $matchesCollection;
         $this->imageWidth = $imageWidth;
         $this->imageHeight = $imageHeight;
-        $this->allotedSpaceY = $allotedSpaceY;
+        $this->allottedSpaceY = $allotedSpaceY;
 
         $this->dayText = new ImagickDraw();
         $this->dayText->setFillColor(new ImagickPixel('#FFFFFF'));
@@ -113,7 +113,7 @@ class ImageMatchesHelper
 
         // If required space is above the available space, then render the day on another column.if
         // Gjør matte for å sjekke om NÅVÆRENDE Y + alle kampene < MATCH_GRID_Y_END.
-        return $this->y + $requiredPixels <= $this->allotedSpaceY;
+        return $this->y + $requiredPixels <= $this->allottedSpaceY;
     }
 
     private function incrementRequiredWidth(int $increment)
@@ -129,8 +129,8 @@ class ImageMatchesHelper
     {
         $this->requiredHeight += $increment;
 
-        if ($this->requiredHeight > $this->allotedSpaceY) {
-            $this->requiredHeight = $this->allotedSpaceY;
+        if ($this->requiredHeight > $this->allottedSpaceY) {
+            $this->requiredHeight = $this->allottedSpaceY;
         }
     }
 
