@@ -11,4 +11,4 @@ Generates an image with the upcoming matches for any Norwegian team, registered 
 * [ ] Validation on input dates when fetching spreadsheet from API.
 
 ### Example image rendered
-![Example image](https://raw.githubusercontent.com/mentisy/weekly-matches/master/example/weekly-matches-example.png)
+![Example image](https://raw.githubusercontent.com/mentisy/weekly-matches/master/public/example/weekly-matches-example.png)
