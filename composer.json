@@ -17,6 +17,7 @@
     "require": {
         "php": "7.4.*",
         "ext-imagick": "*",
+        "ext-json": "*",
         "filp/whoops": "^2.7",
         "guzzlehttp/guzzle": "^7.0",
         "phpoffice/phpspreadsheet": "^1.14",
