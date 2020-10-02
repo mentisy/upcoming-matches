@@ -15,7 +15,7 @@ use ImagickPixel;
  */
 class ImageMatchesHelper
 {
-    const BACKGROUND_COLOR = '#E81B22';
+    const BACKGROUND_COLOR = '#C8271A';
 
     const DAY_FONT_SIZE = 18;
     const MATCH_FONT_SIZE = 14;

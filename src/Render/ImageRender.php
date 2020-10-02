@@ -17,7 +17,7 @@ class ImageRender implements RenderInterface
 
     private ImagickDraw $teamText;
 
-    const BACKGROUND_COLOR = '#E81B22';
+    const BACKGROUND_COLOR = '#C8271A';
 
     const IMAGE_INITIAL_WIDTH = 1400;
     const IMAGE_HEIGHT = 807;
