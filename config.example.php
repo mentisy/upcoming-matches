@@ -15,7 +15,6 @@ use Avolle\WeeklyMatches\Services\ServicesConfig;
  */
 return [
     'teamName' => '',
-    'url' => 'https://www.fotball.no/footballapi/Calendar/DownloadClubExcelCalendar',
     'renderClass' => ImageRender::class,
     'debug' => false,
     'services' => [
