@@ -23,7 +23,7 @@ class ImageMatchesHelper
     const IMAGE_START_X = 5;
     const IMAGE_START_Y = 20;
 
-    const DAY_SPACING_X = 10;
+    const DAY_SPACING_X = 30;
     const DAY_SPACING_Y = 30;
 
     const MATCH_SPACING_Y = 25;
@@ -129,8 +129,8 @@ class ImageMatchesHelper
     private function renderMatch(Match $match): void
     {
         $text = sprintf("%s: %s - %s (%s)", $match->time, $match->homeTeam, $match->awayTeam, $match->tournament);
-        $this->maxStringWidth = max([$this->maxStringWidth, (strlen($text) * self::MATCH_FONT_SIZE / 2)]);
-        $this->maxStringWidthCurrent = max([$this->maxStringWidthCurrent, (strlen($text) * self::MATCH_FONT_SIZE / 2)]);
+        $this->maxStringWidth = max([$this->maxStringWidth, $this->calculateStringWidth($text)]);
+        $this->maxStringWidthCurrent = max([$this->maxStringWidthCurrent, $this->calculateStringWidth($text)]);
 
         $this->image->annotateImage($this->matchShadowText, $this->x + 1, $this->y + 1, 0, $text);
         $this->image->annotateImage($this->matchText, $this->x, $this->y, 0, $text);
@@ -208,5 +208,17 @@ class ImageMatchesHelper
     public function getRequiredHeight()
     {
         return $this->requiredHeight;
+    }
+
+    /**
+     * Calculate how much horizontal space the match text takes up.
+     * This helps decide where to position a new column of matches
+     *
+     * @param string $text Text to calculate width of
+     * @return int
+     */
+    private function calculateStringWidth(string $text): int
+    {
+        return $this->image->queryFontMetrics($this->matchText, $text)['textWidth'];
     }
 }
