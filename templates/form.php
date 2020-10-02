@@ -1,39 +1,68 @@
 <?php
-
+/**
+ * @var \Avolle\WeeklyMatches\View\View $this
+ * @var string|null $infoMessage
+ */
 use Cake\Chronos\Chronos;
 
 ?>
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link href="images/icon-64.png" type="image/x-icon" rel="icon"/>
-    <link href="images/icon-64.png" type="image/x-icon" rel="shortcut icon"/>
-    <title>Ukens Kamper - Aksla IL</title>
-    <link rel="stylesheet" href="css/milligram.min.css" />
-</head>
-<body>
-<div style="width: 200px; margin: 0 auto; text-align: center;">
-    <form action="" method="GET">
-        <div>
-            <label for="dateFrom">Dato fra:</label>
-        </div>
-        <div>
-            <input type="date" name="dateFrom" id="dateFrom" value="<?= Chronos::now()->startOfWeek()->toDateString(); ?>">
-        </div>
-        <div>
-            <label for="dateTo">Dato til:</label>
-        </div>
-        <div>
-            <input type="date" name="dateTo" id="dateTo" value="<?= Chronos::now()->endOfWeek()->toDateString(); ?>">
-        </div>
-        <div>
-            <input type="submit" value="Hente">
-        </div>
-    </form>
-</div>
-</body>
-</html>
+<?php if (isset($infoMessage) && strlen($infoMessage) > 0): ?>
+    <div class="alert alert-info">
+        <?= h($infoMessage); ?>
+    </div>
+<?php endif; ?>
+<?php if ($this->Error->hasErrors()): ?>
+    <div class="alert alert-error">
+        Kunne ikke generere bilde! Noe gikk galt med innsendt informasjon.
+    </div>
+<?php endif; ?>
+<form action="" method="GET">
+    <div>
+        <label for="dateFrom">Dato fra:</label>
+    </div>
+    <div>
+        <input type="date" name="dateFrom" id="dateFrom" required="required" value="<?= Chronos::now()->startOfWeek()->toDateString(); ?>">
+        <?= $this->Error->message('dateFrom'); ?>
+    </div>
+    <div>
+        <label for="dateTo">Dato til:</label>
+    </div>
+    <div>
+        <input type="date" name="dateTo" id="dateTo" required="required" value="<?= Chronos::now()->endOfWeek()->toDateString(); ?>">
+        <?= $this->Error->message('dateTo'); ?>
+    </div>
+    <div>
+        <label for="sport">Sport:</label>
+    </div>
+    <div>
+        <select name="sport" id="sport" required="required">
+            <option value="football">Fotball</option>
+            <option value="handball">Håndball</option>
+        </select>
+        <?= $this->Error->message('sport'); ?>
+    </div>
+    <div>
+        <input type="submit" value="Hente">
+    </div>
+</form>
+
+<style type="text/css">
+    .error {
+        position: relative;
+        top: -15px;
+        color: indianred;
+    }
+    .alert {
+        padding: 10px;
+        border-radius: 5px;
+        margin: 10px 0;
+    }
+    .alert-error {
+        background: indianred;
+        color: #eee;
+    }
+    .alert-info {
+        background: darkcyan;
+        color: #eee;
+    }
+</style>

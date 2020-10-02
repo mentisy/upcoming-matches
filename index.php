@@ -1,6 +1,7 @@
 <?php
 
-use Avolle\WeeklyMatches\CollectMatches;
+use Avolle\WeeklyMatches\App;
+use Avolle\WeeklyMatches\View\View;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Whoops\Handler\PrettyPageHandler;
@@ -11,6 +12,8 @@ require (ROOT . 'vendor/autoload.php');
 require (ROOT . 'functions.php');
 $config = require(ROOT . 'config.php');
 
+setlocale(LC_ALL, 'nb');
+
 $log = new Logger('error');
 $log->pushHandler(new StreamHandler(LOGS . 'error.log', Logger::ERROR));
 
@@ -19,23 +22,17 @@ if ($config['debug']) {
     $handler = new PrettyPageHandler();
 } else {
     $handler = function() use ($whoops) {
-        require TEMPLATES . 'error.php';
+        $view = new View();
+        $view->setVar('whoops', $whoops);
+        $view->display('error');
     };
 }
 $whoops->pushHandler($handler);
-$whoops->pushHandler(function (Exception $exception) use ($log) {
+$whoops->pushHandler(function ($exception) use ($log) {
     $log->error($exception->getMessage() . "\n" . $exception->getTraceAsString());
 });
 $whoops->register();
 
-if (!isset($_GET['dateFrom']) || !isset($_GET['dateTo'])) {
-    require TEMPLATES . 'form.php';
-} else {
-    $dateFrom = $_GET['dateFrom'];
-    $dateTo = $_GET['dateTo'];
+$app = new App($_GET);
 
-    $matches = (new CollectMatches($config['url'], $config['clubId'], $dateFrom, $dateTo))->getMatches();
-
-    $renderClass = $config['renderClass'];
-    (new $renderClass($matches))->output();
-}
+$app->run();
