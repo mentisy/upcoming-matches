@@ -7,9 +7,9 @@ use Monolog\Logger;
 use Whoops\Handler\PrettyPageHandler;
 use Whoops\Run;
 
-require __DIR__ . DIRECTORY_SEPARATOR . 'paths.php';
-require (ROOT . 'vendor/autoload.php');
-require (ROOT . 'functions.php');
+require dirname(__DIR__) . DIRECTORY_SEPARATOR . 'paths.php';
+require(ROOT . 'vendor/autoload.php');
+require(ROOT . 'functions.php');
 $config = require(ROOT . 'config.php');
 
 setlocale(LC_ALL, 'nb');

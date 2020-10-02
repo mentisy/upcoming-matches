@@ -106,7 +106,7 @@ class ImageRender implements RenderInterface
 
         $this->imagick->annotateImage($this->teamText, $x, $y, 0, strtoupper('Aksla IL'));
         $logo = new Imagick();
-        $logo->readImage(IMAGES . 'team-logo-512.png');
+        $logo->readImage(RENDERABLES . 'team-logo-512.png');
         $logo->resizeImage(128, 128, null, 0);
 
         $logoPositionX = $this->imageWidth - 200;
@@ -122,7 +122,7 @@ class ImageRender implements RenderInterface
     private function renderSponsors()
     {
         $sponsors = new Imagick();
-        $sponsors->readImage(IMAGES . 'sponsors.png');
+        $sponsors->readImage(RENDERABLES . 'sponsors.png');
         $factor = $this->imageWidth / $sponsors->getImageWidth();
         $width = $sponsors->getImageHeight() * $factor;
         $yFromBottom = $this->requiredSponsorSpacingFromBottom($width);
