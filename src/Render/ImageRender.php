@@ -4,7 +4,6 @@ namespace Avolle\WeeklyMatches\Render;
 
 use Avolle\WeeklyMatches\Match;
 use Avolle\WeeklyMatches\Render\Helper\ImageMatchesHelper;
-use Cake\Chronos\Chronos;
 use Cake\Collection\CollectionInterface;
 use Imagick;
 use ImagickDraw;
@@ -63,7 +62,7 @@ class ImageRender implements RenderInterface
     private function groupByDate(CollectionInterface $matchesCollection): CollectionInterface
     {
         return $matchesCollection->groupBy(
-            fn(Match $match) => $match->day . (new Chronos($match->date))->format(" d. F")
+            fn(Match $match) => $match->day . strftime(' %d. %B', $match->date->getTimestamp())
         );
     }
 
