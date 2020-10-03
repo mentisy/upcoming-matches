@@ -1,20 +1,20 @@
 <?php
 
-namespace Avolle\WeeklyMatches\View;
+namespace Avolle\UpcomingMatches\View;
 
-use Avolle\WeeklyMatches\Exception\MissingViewException;
+use Avolle\UpcomingMatches\Exception\MissingViewException;
 
 /**
  * Class View
  *
- * @package Avolle\WeeklyMatches\View
+ * @package Avolle\UpcomingMatches\View
  */
 class View
 {
     /**
      * Error Helper
      *
-     * @var \Avolle\WeeklyMatches\View\ErrorHelper
+     * @var \Avolle\UpcomingMatches\View\ErrorHelper
      */
     protected ErrorHelper $Error;
 
@@ -64,7 +64,7 @@ class View
      *
      * @param string $view View template to display
      * @return self
-     * @throws \Avolle\WeeklyMatches\Exception\MissingViewException
+     * @throws \Avolle\UpcomingMatches\Exception\MissingViewException
      */
     public function display(string $view): self
     {
@@ -90,7 +90,7 @@ class View
      *
      * @param string $view View template to display
      * @return void
-     * @throws \Avolle\WeeklyMatches\Exception\MissingViewException
+     * @throws \Avolle\UpcomingMatches\Exception\MissingViewException
      */
     private function createContent(string $view): void
     {

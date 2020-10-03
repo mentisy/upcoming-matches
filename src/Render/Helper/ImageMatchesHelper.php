@@ -1,8 +1,8 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Render\Helper;
+namespace Avolle\UpcomingMatches\Render\Helper;
 
-use Avolle\WeeklyMatches\Match;
+use Avolle\UpcomingMatches\Match;
 use Cake\Collection\CollectionInterface;
 use Imagick;
 use ImagickDraw;
@@ -11,7 +11,7 @@ use ImagickPixel;
 /**
  * Class ImageMatchesHelper
  *
- * @package Avolle\WeeklyMatches\Render\Helper
+ * @package Avolle\UpcomingMatches\Render\Helper
  */
 class ImageMatchesHelper
 {

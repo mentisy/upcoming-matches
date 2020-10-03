@@ -1,11 +1,11 @@
 <?php
 
-namespace Avolle\WeeklyMatches\View;
+namespace Avolle\UpcomingMatches\View;
 
 /**
  * Class ErrorHelper
  *
- * @package Avolle\WeeklyMatches\View
+ * @package Avolle\UpcomingMatches\View
  */
 class ErrorHelper
 {

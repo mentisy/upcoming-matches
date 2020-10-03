@@ -1,20 +1,20 @@
 <?php
 
-namespace Avolle\WeeklyMatches;
+namespace Avolle\UpcomingMatches;
 
-use Avolle\WeeklyMatches\Exception\InvalidRendererException;
-use Avolle\WeeklyMatches\Exception\InvalidSportException;
-use Avolle\WeeklyMatches\Exception\MissingSportConfigurationException;
-use Avolle\WeeklyMatches\Render\RenderInterface;
-use Avolle\WeeklyMatches\Services\ServicesConfig;
-use Avolle\WeeklyMatches\Services\ServicesInterface;
-use Avolle\WeeklyMatches\Validator\Validator;
-use Avolle\WeeklyMatches\View\View;
+use Avolle\UpcomingMatches\Exception\InvalidRendererException;
+use Avolle\UpcomingMatches\Exception\InvalidSportException;
+use Avolle\UpcomingMatches\Exception\MissingSportConfigurationException;
+use Avolle\UpcomingMatches\Render\RenderInterface;
+use Avolle\UpcomingMatches\Services\ServicesConfig;
+use Avolle\UpcomingMatches\Services\ServicesInterface;
+use Avolle\UpcomingMatches\Validator\Validator;
+use Avolle\UpcomingMatches\View\View;
 
 /**
  * Class App
  *
- * @package Avolle\WeeklyMatches
+ * @package Avolle\UpcomingMatches
  */
 class App
 {
@@ -35,21 +35,21 @@ class App
     /**
      * View class
      *
-     * @var \Avolle\WeeklyMatches\View\View
+     * @var \Avolle\UpcomingMatches\View\View
      */
     protected View $view;
 
     /**
      * Service to use in the app
      *
-     * @var \Avolle\WeeklyMatches\Services\ServicesInterface
+     * @var \Avolle\UpcomingMatches\Services\ServicesInterface
      */
     protected ServicesInterface $service;
 
     /**
      * Service's config
      *
-     * @var \Avolle\WeeklyMatches\Services\ServicesConfig
+     * @var \Avolle\UpcomingMatches\Services\ServicesConfig
      */
     protected ServicesConfig $serviceConfig;
 
@@ -68,11 +68,11 @@ class App
     /**
      * Run the application
      *
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidRendererException
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidSportException
-     * @throws \Avolle\WeeklyMatches\Exception\MissingSportConfigurationException
-     * @throws \Avolle\WeeklyMatches\Exception\RuleNotFoundException
-     * @throws \Avolle\WeeklyMatches\Exception\MissingViewException
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidRendererException
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidSportException
+     * @throws \Avolle\UpcomingMatches\Exception\MissingSportConfigurationException
+     * @throws \Avolle\UpcomingMatches\Exception\RuleNotFoundException
+     * @throws \Avolle\UpcomingMatches\Exception\MissingViewException
      */
     public function run()
     {
@@ -110,14 +110,14 @@ class App
      * Initializes the requested sport service instance
      *
      * @param string $sport Sport service to use
-     * @return \Avolle\WeeklyMatches\Services\ServicesInterface
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidSportException
-     * @throws \Avolle\WeeklyMatches\Exception\MissingSportConfigurationException
+     * @return \Avolle\UpcomingMatches\Services\ServicesInterface
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidSportException
+     * @throws \Avolle\UpcomingMatches\Exception\MissingSportConfigurationException
      */
     protected function initService(string $sport): ServicesInterface
     {
         $serviceName = str_replace(' ', '', ucwords($sport));
-        $serviceClassName = sprintf("Avolle\\WeeklyMatches\\Services\\%sService", $serviceName);
+        $serviceClassName = sprintf("Avolle\\UpcomingMatches\\Services\\%sService", $serviceName);
 
         if (!class_exists($serviceClassName)) {
             throw new InvalidSportException($serviceName . ' is not a valid sport.');
@@ -149,8 +149,8 @@ class App
      * Render the matches depending on the configuration's render class
      *
      * @param array $matches Match entities retrieved from the selected service
-     * @return \Avolle\WeeklyMatches\App
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidRendererException
+     * @return \Avolle\UpcomingMatches\App
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidRendererException
      */
     protected function render(array $matches): self
     {
@@ -178,7 +178,7 @@ class App
      *
      * @param array $requestData Request data for this request
      * @return array
-     * @throws \Avolle\WeeklyMatches\Exception\RuleNotFoundException
+     * @throws \Avolle\UpcomingMatches\Exception\RuleNotFoundException
      */
     protected function validateRequestData(array $requestData): array
     {

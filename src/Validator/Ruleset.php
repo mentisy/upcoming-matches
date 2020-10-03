@@ -1,6 +1,6 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Validator;
+namespace Avolle\UpcomingMatches\Validator;
 
 use Cake\Chronos\Date;
 use Exception;
@@ -8,7 +8,7 @@ use Exception;
 /**
  * Class Ruleset
  *
- * @package Avolle\WeeklyMatches\Validator
+ * @package Avolle\UpcomingMatches\Validator
  */
 class Ruleset
 {

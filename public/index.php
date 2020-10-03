@@ -1,7 +1,7 @@
 <?php
 
-use Avolle\WeeklyMatches\App;
-use Avolle\WeeklyMatches\View\View;
+use Avolle\UpcomingMatches\App;
+use Avolle\UpcomingMatches\View\View;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Whoops\Handler\PrettyPageHandler;

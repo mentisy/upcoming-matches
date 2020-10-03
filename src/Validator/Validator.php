@@ -1,13 +1,13 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Validator;
+namespace Avolle\UpcomingMatches\Validator;
 
-use Avolle\WeeklyMatches\Exception\RuleNotFoundException;
+use Avolle\UpcomingMatches\Exception\RuleNotFoundException;
 
 /**
  * Class Validator
  *
- * @package Avolle\WeeklyMatches\Validator
+ * @package Avolle\UpcomingMatches\Validator
  */
 class Validator
 {
@@ -78,7 +78,7 @@ class Validator
      * Validate the fields based on the passed rules
      *
      * @return bool True if valid request data. False otherwise
-     * @throws \Avolle\WeeklyMatches\Exception\RuleNotFoundException
+     * @throws \Avolle\UpcomingMatches\Exception\RuleNotFoundException
      */
     public function validate(): bool
     {

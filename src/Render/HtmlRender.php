@@ -1,6 +1,6 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Render;
+namespace Avolle\UpcomingMatches\Render;
 
 use Cake\Collection\CollectionInterface;
 

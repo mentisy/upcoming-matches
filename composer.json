@@ -1,17 +1,17 @@
 {
-    "name": "avolle/weekly-matches",
+    "name": "avolle/upcoming-matches",
     "description": "Generates an image of upcoming matches, with customized team name and logo",
     "type": "project",
     "license": "MIT",
     "authors": [
         {
             "name": "Alexander Volle",
-            "email": "weekly.matches@avolle.com"
+            "email": "upcoming.matches@avolle.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Avolle\\WeeklyMatches\\": "src"
+            "Avolle\\UpcomingMatches\\": "src"
         }
     },
     "require": {

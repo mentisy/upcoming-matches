@@ -1,8 +1,8 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Services;
+namespace Avolle\UpcomingMatches\Services;
 
-use Avolle\WeeklyMatches\Match;
+use Avolle\UpcomingMatches\Match;
 use Cake\Chronos\Chronos;
 use JsonException;
 

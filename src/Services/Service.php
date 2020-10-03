@@ -1,8 +1,8 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Services;
+namespace Avolle\UpcomingMatches\Services;
 
-use Avolle\WeeklyMatches\Exception\InvalidResponseException;
+use Avolle\UpcomingMatches\Exception\InvalidResponseException;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -20,7 +20,7 @@ abstract class Service implements ServicesInterface
     /**
      * Service constructor.
      *
-     * @param \Avolle\WeeklyMatches\Services\ServicesConfig $config The config instance of the Service
+     * @param \Avolle\UpcomingMatches\Services\ServicesConfig $config The config instance of the Service
      */
     public function __construct(ServicesConfig $config)
     {
@@ -30,7 +30,7 @@ abstract class Service implements ServicesInterface
     /**
      * Get the Service instance's config
      *
-     * @return \Avolle\WeeklyMatches\Services\ServicesConfig
+     * @return \Avolle\UpcomingMatches\Services\ServicesConfig
      */
     public function getConfig(): ServicesConfig
     {
@@ -44,7 +44,7 @@ abstract class Service implements ServicesInterface
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidResponseException
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidResponseException
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Psr\Cache\InvalidArgumentException
      */
@@ -84,7 +84,7 @@ abstract class Service implements ServicesInterface
      * @param string $dateFrom Start date to get matches for
      * @param string $dateTo End date to get matches for
      * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidResponseException
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidResponseException
      * @return void
      */
     private function _fetch(string $dateFrom, string $dateTo): void
