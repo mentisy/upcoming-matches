@@ -32,12 +32,20 @@ class View
      */
     private array $vars = [];
 
+    /***
+     * @var array Request data
+     */
+    private array $requestData;
+
     /**
      * View constructor.
+     *
+     * @param array $requestData The query string data for this request
      */
-    public function __construct()
+    public function __construct(array $requestData = [])
     {
         $this->Error = new ErrorHelper();
+        $this->requestData = $requestData;
     }
 
     /**

@@ -62,7 +62,7 @@ class App
     {
         $this->appConfig = $this->appConfig();
         $this->requestData = $requestData;
-        $this->view = new View();
+        $this->view = new View($requestData);
     }
 
     /**
