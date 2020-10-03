@@ -127,4 +127,21 @@ class View
     {
         $this->vars['infoMessage'] = $message;
     }
+
+    /**
+     * Returns the request data array. If $field is provided, it will attempt to return the $field key in the array
+     * Optional $default value will be returned if the $field does not exist in the array
+     *
+     * @param string|null $field Field to get from request data - If null fetches the entire array
+     * @param null $default If provided, it will return this value if no field found in request data array
+     * @return mixed
+     */
+    public function getRequestData(?string $field, $default = null)
+    {
+        if (!is_null($field)) {
+            return $this->requestData[$field] ?? $default;
+        }
+
+        return $this->requestData;
+    }
 }
