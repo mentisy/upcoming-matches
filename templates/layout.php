@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Avolle\WeeklyMatches\View\View $this
+ * @var \Avolle\UpcomingMatches\View\View $this
  */
 ?>
 <!doctype html>

@@ -1,6 +1,6 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Exception;
+namespace Avolle\UpcomingMatches\Exception;
 
 use Exception;
 

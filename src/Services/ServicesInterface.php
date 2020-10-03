@@ -1,20 +1,20 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Services;
+namespace Avolle\UpcomingMatches\Services;
 
 interface ServicesInterface
 {
     /**
      * Service constructor.
      *
-     * @param \Avolle\WeeklyMatches\Services\ServicesConfig $config The config instance of the Service
+     * @param \Avolle\UpcomingMatches\Services\ServicesConfig $config The config instance of the Service
      */
     public function __construct(ServicesConfig $config);
 
     /**
      * Get the Service's config
      *
-     * @return \Avolle\WeeklyMatches\Services\ServicesConfig
+     * @return \Avolle\UpcomingMatches\Services\ServicesConfig
      */
     public function getConfig(): ServicesConfig;
 
@@ -25,7 +25,7 @@ interface ServicesInterface
      *
      * @param string $dateFrom
      * @param string $dateTo
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidResponseException
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidResponseException
      * @throws \GuzzleHttp\Exception\GuzzleException
      * @throws \Psr\Cache\InvalidArgumentException
      */

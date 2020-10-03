@@ -1,13 +1,13 @@
 <?php
 
-namespace Avolle\WeeklyMatches;
+namespace Avolle\UpcomingMatches;
 
 use DateTime;
 
 /**
  * Class Match
  *
- * @package Avolle\WeeklyMatches
+ * @package Avolle\UpcomingMatches
  */
 class Match
 {

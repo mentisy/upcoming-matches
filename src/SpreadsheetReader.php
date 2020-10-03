@@ -1,8 +1,8 @@
 <?php
 
-namespace Avolle\WeeklyMatches;
+namespace Avolle\UpcomingMatches;
 
-use Avolle\WeeklyMatches\Exception\InvalidExcelConfiguration;
+use Avolle\UpcomingMatches\Exception\InvalidExcelConfiguration;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
@@ -11,7 +11,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 /**
  * Class SpreadsheetReader
  *
- * @package Avolle\WeeklyMatches
+ * @package Avolle\UpcomingMatches
  */
 class SpreadsheetReader
 {
@@ -46,7 +46,7 @@ class SpreadsheetReader
     /**
      * An array of Match entities
      *
-     * @var \Avolle\WeeklyMatches\Match[]
+     * @var \Avolle\UpcomingMatches\Match[]
      */
     private array $matches;
 
@@ -55,7 +55,7 @@ class SpreadsheetReader
      *
      * @param string $filename Filename to read spreadsheet from
      * @param array $options Options to use in the reader
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidExcelConfiguration
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidExcelConfiguration
      */
     public function __construct(string $filename, $options = [])
     {
@@ -72,7 +72,7 @@ class SpreadsheetReader
      * Read matches from the spreadsheet and compile them into an array of Match entities
      *
      * @return array
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidExcelConfiguration
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidExcelConfiguration
      */
     private function compileMatches(): array
     {
@@ -145,7 +145,7 @@ class SpreadsheetReader
     /**
      * Returns the compiled array of Match entities
      *
-     * @return \Avolle\WeeklyMatches\Match[]
+     * @return \Avolle\UpcomingMatches\Match[]
      */
     public function getMatches(): array
     {

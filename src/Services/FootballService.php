@@ -1,13 +1,13 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Services;
+namespace Avolle\UpcomingMatches\Services;
 
-use Avolle\WeeklyMatches\SpreadsheetReader;
+use Avolle\UpcomingMatches\SpreadsheetReader;
 
 /**
  * Class FootballService
  *
- * @package Avolle\WeeklyMatches\Services
+ * @package Avolle\UpcomingMatches\Services
  */
 class FootballService extends Service
 {
@@ -15,8 +15,8 @@ class FootballService extends Service
      * Returns the converted API result into an array
      * In this instance it reads the spreadsheet file and creates an array of Match entities
      *
-     * @return \Avolle\WeeklyMatches\Match[]
-     * @throws \Avolle\WeeklyMatches\Exception\InvalidExcelConfiguration
+     * @return \Avolle\UpcomingMatches\Match[]
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidExcelConfiguration
      */
     public function toArray(): array
     {
@@ -28,7 +28,7 @@ class FootballService extends Service
      * Uses the $callback parameter to read and convert the spreadsheet data to an array of Match entities
      *
      * @param callable $callback The callback to read and convert spreadsheet data
-     * @return \Avolle\WeeklyMatches\Match[]
+     * @return \Avolle\UpcomingMatches\Match[]
      */
     protected function prepareSpreadsheetFile(callable $callback): array
     {

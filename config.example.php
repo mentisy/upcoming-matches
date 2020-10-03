@@ -1,7 +1,7 @@
 <?php
 
-use Avolle\WeeklyMatches\Render\ImageRender;
-use Avolle\WeeklyMatches\Services\ServicesConfig;
+use Avolle\UpcomingMatches\Render\ImageRender;
+use Avolle\UpcomingMatches\Services\ServicesConfig;
 
 /*
  * Config

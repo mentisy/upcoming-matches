@@ -1,6 +1,6 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Services;
+namespace Avolle\UpcomingMatches\Services;
 
 use ReflectionClass;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;

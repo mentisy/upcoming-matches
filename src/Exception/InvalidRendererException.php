@@ -1,13 +1,13 @@
 <?php
 
-namespace Avolle\WeeklyMatches\Exception;
+namespace Avolle\UpcomingMatches\Exception;
 
 use Exception;
 
 /**
  * Class InvalidRendererException
  *
- * @package Avolle\WeeklyMatches\Exception
+ * @package Avolle\UpcomingMatches\Exception
  */
 class InvalidRendererException extends Exception
 {
