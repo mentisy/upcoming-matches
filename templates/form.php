@@ -21,14 +21,16 @@ use Cake\Chronos\Chronos;
         <label for="dateFrom">Dato fra:</label>
     </div>
     <div>
-        <input type="date" name="dateFrom" id="dateFrom" required="required" value="<?= Chronos::now()->startOfWeek()->toDateString(); ?>">
+        <?php $value = $this->getRequestData('dateFrom', Chronos::now()->startOfWeek()->toDateString()); ?>
+        <input type="date" name="dateFrom" id="dateFrom" required="required" value="<?= $value; ?>">
         <?= $this->Error->message('dateFrom'); ?>
     </div>
     <div>
         <label for="dateTo">Dato til:</label>
     </div>
     <div>
-        <input type="date" name="dateTo" id="dateTo" required="required" value="<?= Chronos::now()->endOfWeek()->toDateString(); ?>">
+        <?php $value = $this->getRequestData('dateTo', Chronos::now()->endOfWeek()->toDateString()); ?>
+        <input type="date" name="dateTo" id="dateTo" required="required" value="<?= $value ?>">
         <?= $this->Error->message('dateTo'); ?>
     </div>
     <div>
@@ -36,8 +38,8 @@ use Cake\Chronos\Chronos;
     </div>
     <div>
         <select name="sport" id="sport" required="required">
-            <option value="football">Fotball</option>
-            <option value="handball">Håndball</option>
+            <option value="football" <?= $this->getRequestData('sport') === 'fotball' ? 'selected="selected"' : ''; ?>>Fotball</option>
+            <option value="handball" <?= $this->getRequestData('sport') === 'handball' ? 'selected="selected"' : ''; ?>>Håndball</option>
         </select>
         <?= $this->Error->message('sport'); ?>
     </div>
