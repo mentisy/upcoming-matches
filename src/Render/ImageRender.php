@@ -4,6 +4,7 @@ namespace Avolle\UpcomingMatches\Render;
 
 use Avolle\UpcomingMatches\Match;
 use Avolle\UpcomingMatches\Render\Helper\ImageMatchesHelper;
+use Avolle\UpcomingMatches\SportConfig;
 use Cake\Collection\CollectionInterface;
 use Imagick;
 use ImagickDraw;
@@ -12,9 +13,12 @@ use ImagickPixel;
 class ImageRender implements RenderInterface
 {
     private CollectionInterface $matchesCollection;
+    private SportConfig $sportConfig;
+
     private Imagick $imagick;
 
     private ImagickDraw $teamText;
+    private ImagickDraw $sportText;
 
     const BACKGROUND_COLOR = '#C8271A';
 
@@ -22,6 +26,7 @@ class ImageRender implements RenderInterface
     const IMAGE_HEIGHT = 807;
 
     const TEAM_NAME_FONT_SIZE = 46;
+    const SPORT_FONT_SIZE = 30;
 
     const LOGO_POSITION_X = 50;
     const LOGO_POSITION_Y = 100;
@@ -35,9 +40,10 @@ class ImageRender implements RenderInterface
     private float $requiredMatchSizeX = self::MATCH_GRID_X_START;
     private float $requiredMatchSizeY = 0;
 
-    public function __construct(CollectionInterface $matchesCollection)
+    public function __construct(CollectionInterface $matchesCollection, SportConfig $sportConfig)
     {
         $this->matchesCollection = $this->groupByDate($matchesCollection);
+        $this->sportConfig = $sportConfig;
 
         $this->init();
         $this->renderMatches();
@@ -75,6 +81,11 @@ class ImageRender implements RenderInterface
         $this->teamText->setFont(FONTS . 'Roboto-Bold.ttf');
         $this->teamText->setFontSize(self::TEAM_NAME_FONT_SIZE);
         $this->teamText->setFillColor(new ImagickPixel('#FFFFFF'));
+
+        $this->sportText = new ImagickDraw();
+        $this->sportText->setFont(FONTS . 'Roboto-Bold.ttf');
+        $this->sportText->setFontSize(self::SPORT_FONT_SIZE);
+        $this->sportText->setFillColor(new ImagickPixel('#FFFFFF'));
     }
 
     private function renderMatches()
@@ -104,7 +115,8 @@ class ImageRender implements RenderInterface
         $x = self::LOGO_POSITION_X;
         $y = self::LOGO_POSITION_Y;
 
-        $this->imagick->annotateImage($this->teamText, $x, $y, 0, strtoupper('Aksla IL'));
+        $this->imagick->annotateImage($this->teamText, $x, $y, 0, strtoupper($this->sportConfig->teamName));
+        $this->imagick->annotateImage($this->sportText, $x, $y + self::TEAM_NAME_FONT_SIZE, 0, $this->sportConfig->renderSubTitle);
         $logo = new Imagick();
         $logo->readImage(RENDERABLES . 'team-logo-512.png');
         $logo->resizeImage(128, 128, null, 0);
