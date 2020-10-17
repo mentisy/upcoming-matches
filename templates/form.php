@@ -1,6 +1,7 @@
 <?php
 /**
  * @var \Avolle\UpcomingMatches\View\View $this
+ * @var \Avolle\UpcomingMatches\SportConfig[] $sports
  * @var string|null $infoMessage
  */
 use Cake\Chronos\Chronos;
@@ -38,8 +39,14 @@ use Cake\Chronos\Chronos;
     </div>
     <div>
         <select name="sport" id="sport" required="required">
-            <option value="football" <?= $this->getRequestData('sport') === 'fotball' ? 'selected="selected"' : ''; ?>>Fotball</option>
-            <option value="handball" <?= $this->getRequestData('sport') === 'handball' ? 'selected="selected"' : ''; ?>>Håndball</option>
+            <?php foreach ($sports as $sport => $sportConfig): ?>
+                <option
+                    value="<?= $sport; ?>"
+                    <?= $this->getRequestData('sport') === $sport ? 'selected="selected"' : ''; ?>
+                >
+                    <?= h($sportConfig->sport); ?>
+                </option>
+            <?php endforeach; ?>
         </select>
         <?= $this->Error->message('sport'); ?>
     </div>

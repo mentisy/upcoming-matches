@@ -2,6 +2,7 @@
 
 namespace Avolle\UpcomingMatches\Render;
 
+use Avolle\UpcomingMatches\SportConfig;
 use Cake\Collection\CollectionInterface;
 
 class HtmlRender implements RenderInterface
@@ -11,7 +12,7 @@ class HtmlRender implements RenderInterface
      */
     private CollectionInterface $matchesCollection;
 
-    public function __construct(CollectionInterface $matchesCollection)
+    public function __construct(CollectionInterface $matchesCollection, SportConfig $sportConfig)
     {
         $this->matchesCollection = $matchesCollection;
     }

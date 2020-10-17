@@ -47,11 +47,11 @@ class App
     protected ServicesInterface $service;
 
     /**
-     * Service's config
+     * Sport's config
      *
-     * @var \Avolle\UpcomingMatches\Services\ServicesConfig
+     * @var \Avolle\UpcomingMatches\SportConfig
      */
-    protected ServicesConfig $serviceConfig;
+    protected SportConfig $sportConfig;
 
     /**
      * App constructor.
@@ -77,11 +77,14 @@ class App
     public function run()
     {
         if (empty($this->requestData)) {
+            $this->view->setVar('sports', $this->appConfig['sports']);
+
             return $this->view->display('form');
         }
 
         $errors = $this->validateRequestData($this->requestData);
         if (!empty($errors)) {
+            $this->view->setVar('sports', $this->appConfig['sports']);
             $this->view->setErrors($errors);
 
             return $this->view->display('form');
@@ -123,18 +126,18 @@ class App
             throw new InvalidSportException($serviceName . ' is not a valid sport.');
         }
 
-        if (!isset($this->appConfig['services'][$sport])) {
+        if (!isset($this->appConfig['sports'][$sport]->serviceConfig)) {
             throw new MissingSportConfigurationException('Missing `' . $sport . '` Service configuration.');
         }
-        if (!$this->appConfig['services'][$sport] instanceof ServicesConfig) {
+        if (!$this->appConfig['sports'][$sport]->serviceConfig instanceof ServicesConfig) {
             throw new MissingSportConfigurationException(
                 'The `' . $sport . '` configuration must be instance of ' . ServicesConfig::class
             );
         }
 
-        $this->serviceConfig = $this->appConfig['services'][$sport];
+        $this->sportConfig = $this->appConfig['sports'][$sport];
 
-        return new $serviceClassName($this->serviceConfig);
+        return new $serviceClassName($this->sportConfig->serviceConfig);
     }
 
     /**
@@ -162,7 +165,7 @@ class App
 
         $matches = collection($matches);
 
-        $renderer = new $renderClass($matches);
+        $renderer = new $renderClass($matches, $this->sportConfig);
 
         if (!$renderer instanceof RenderInterface) {
             throw new InvalidRendererException($renderClass . ' must implement ' . RenderInterface::class);
@@ -208,6 +211,6 @@ class App
      */
     private function validServices()
     {
-        return array_keys($this->appConfig['services']);
+        return array_keys($this->appConfig['sports']);
     }
 }

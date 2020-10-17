@@ -12,7 +12,9 @@ require(ROOT . 'vendor/autoload.php');
 require(ROOT . 'functions.php');
 $config = require(ROOT . 'config.php');
 
-setlocale(LC_ALL, 'nb');
+if (!setlocale(LC_ALL, 'nb_NO')) {
+    setlocale(LC_ALL, 'nb');
+};
 
 $log = new Logger('error');
 $log->pushHandler(new StreamHandler(LOGS . 'error.log', Logger::ERROR));
