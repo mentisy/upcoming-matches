@@ -16,6 +16,13 @@ interface RenderInterface
     public function __construct(CollectionInterface $matches, SportConfig $sportConfig);
 
     /**
+     * Will perform the rendering and readies it for output
+     *
+     * @return void
+     */
+    public function render(): void;
+
+    /**
      * Output method. Will output the render
      */
     public function output(): void;

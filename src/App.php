@@ -76,15 +76,13 @@ class App
      */
     public function run()
     {
+        $this->view->setVar('sports', $this->appConfig['sports']);
         if (empty($this->requestData)) {
-            $this->view->setVar('sports', $this->appConfig['sports']);
-
             return $this->view->display('form');
         }
 
         $errors = $this->validateRequestData($this->requestData);
         if (!empty($errors)) {
-            $this->view->setVar('sports', $this->appConfig['sports']);
             $this->view->setErrors($errors);
 
             return $this->view->display('form');
@@ -166,6 +164,9 @@ class App
         $matches = collection($matches);
 
         $renderer = new $renderClass($matches, $this->sportConfig);
+        $theme = new $this->appConfig['theme'];
+        $renderer->setTheme($theme);
+        $renderer->render();
 
         if (!$renderer instanceof RenderInterface) {
             throw new InvalidRendererException($renderClass . ' must implement ' . RenderInterface::class);

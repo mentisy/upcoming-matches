@@ -2,5 +2,7 @@
 
 function h(string $text): string
 {
-    return htmlspecialchars($text);
+    $charset = mb_internal_encoding() ?: 'UTF-8';
+
+    return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset, true);
 }
