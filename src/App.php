@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches;
 
@@ -164,7 +165,7 @@ class App
         $matches = collection($matches);
 
         $renderer = new $renderClass($matches, $this->sportConfig);
-        $theme = new $this->appConfig['theme'];
+        $theme = new $this->appConfig['theme']();
         $renderer->setTheme($theme);
         $renderer->render();
 
@@ -210,7 +211,7 @@ class App
      *
      * @return array
      */
-    private function validServices()
+    private function validServices(): array
     {
         return array_keys($this->appConfig['sports']);
     }

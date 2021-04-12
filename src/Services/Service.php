@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Services;
 
@@ -128,6 +129,6 @@ abstract class Service implements ServicesInterface
         ];
         $params = $this->config->params + $dateParams;
 
-        return http_build_query($params, null, '&', PHP_QUERY_RFC3986);
+        return http_build_query($params, '', '&', PHP_QUERY_RFC3986);
     }
 }

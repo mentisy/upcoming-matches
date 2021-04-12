@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Themes;
 
@@ -6,7 +7,6 @@ namespace Avolle\UpcomingMatches\Themes;
  * Class Theme
  *
  * @package Avolle\UpcomingMatches\Themes
- *
  * @property string $backgroundColor
  * @property string $fontColor
  * @property string $logo
@@ -43,5 +43,5 @@ class Theme
     /**
      * @var string
      */
-    public string $font = FONTS . 'Roboto-Bold.ttf';
+    public string $font = 'Bahnschrift';
 }

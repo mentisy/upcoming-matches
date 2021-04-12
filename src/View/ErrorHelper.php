@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\View;
 
@@ -33,7 +34,7 @@ class ErrorHelper
      */
     public function __construct(array $errors = [])
     {
-    	$this->errors = $errors;
+        $this->errors = $errors;
     }
 
     /**
@@ -73,7 +74,7 @@ class ErrorHelper
      */
     public function hasErrors(): bool
     {
-    	return !empty($this->errors);
+        return !empty($this->errors);
     }
 
     /**
@@ -83,7 +84,7 @@ class ErrorHelper
      */
     public function setTemplates(array $templates): void
     {
-    	$this->templates = $templates;
+        $this->templates = $templates;
     }
 
     /**
@@ -94,6 +95,6 @@ class ErrorHelper
      */
     public function setTemplate(string $templateKey, string $templateString): void
     {
-    	$this->templates[$templateKey] = $templateString;
+        $this->templates[$templateKey] = $templateString;
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Render;
 
@@ -22,20 +23,20 @@ class ImageRender implements RenderInterface
     private ImagickDraw $teamText;
     private ImagickDraw $sportText;
 
-    const IMAGE_INITIAL_WIDTH = 2000;
-    const IMAGE_HEIGHT = 807;
+    public const IMAGE_INITIAL_WIDTH = 2000;
+    public const IMAGE_HEIGHT = 807;
 
-    const TEAM_NAME_FONT_SIZE = 46;
-    const SPORT_FONT_SIZE = 30;
+    public const TEAM_NAME_FONT_SIZE = 46;
+    public const SPORT_FONT_SIZE = 30;
 
-    const LOGO_POSITION_X = 50;
-    const LOGO_POSITION_Y = 100;
+    public const LOGO_POSITION_X = 50;
+    public const LOGO_POSITION_Y = 100;
 
-    const MATCH_GRID_X_START = 50;
-    const MATCH_GRID_Y_START = 200;
-    const MATCH_GRID_Y_END = self::IMAGE_HEIGHT - 170;
+    public const MATCH_GRID_X_START = 50;
+    public const MATCH_GRID_Y_START = 200;
+    public const MATCH_GRID_Y_END = self::IMAGE_HEIGHT - 170;
 
-    private float $imageWidth = self::IMAGE_INITIAL_WIDTH;
+    private int $imageWidth = self::IMAGE_INITIAL_WIDTH;
 
     private float $requiredMatchSizeX = self::MATCH_GRID_X_START;
     private float $requiredMatchSizeY = 0;
@@ -46,6 +47,11 @@ class ImageRender implements RenderInterface
         $this->sportConfig = $sportConfig;
     }
 
+    /**
+     * Renders the image with the current theme and configuration
+     *
+     * @throws \ImagickException
+     */
     public function render(): void
     {
         $this->init();
@@ -114,24 +120,35 @@ class ImageRender implements RenderInterface
         $this->requiredMatchSizeX += $matchesHelper->getRequiredWidth();
         $this->requiredMatchSizeY = $matchesHelper->getRequiredHeight();
 
-        $this->imageWidth = $this->requiredMatchSizeX + 30;
+        $this->imageWidth = (int)$this->requiredMatchSizeX + 30;
 
         $this->imagick->cropImage($this->imageWidth, self::IMAGE_HEIGHT, 0, 0);
         $this->imagick->setSize($this->imageWidth, self::IMAGE_HEIGHT);
 
-        $this->imagick->compositeImage($image, Imagick::COMPOSITE_DEFAULT, self::MATCH_GRID_X_START, self::MATCH_GRID_Y_START);
+        $this->imagick->compositeImage(
+            $image,
+            Imagick::COMPOSITE_DEFAULT,
+            self::MATCH_GRID_X_START,
+            self::MATCH_GRID_Y_START,
+        );
     }
 
+    /**
+     * Places the team name, type and logo on top of the image
+     *
+     * @throws \ImagickException
+     */
     private function renderTeamDetails()
     {
         $x = self::LOGO_POSITION_X;
         $y = self::LOGO_POSITION_Y;
+        $subTitleY = $y + self::TEAM_NAME_FONT_SIZE;
 
         $this->imagick->annotateImage($this->teamText, $x, $y, 0, strtoupper($this->sportConfig->teamName));
-        $this->imagick->annotateImage($this->sportText, $x, $y + self::TEAM_NAME_FONT_SIZE, 0, $this->sportConfig->renderSubTitle);
+        $this->imagick->annotateImage($this->sportText, $x, $subTitleY, 0, $this->sportConfig->renderSubTitle);
         $logo = new Imagick();
         $logo->readImage(RENDERABLES . $this->theme->logo);
-        $logo->resizeImage(128, 128, null, 0);
+        $logo->resizeImage(128, 128, 0, 0);
 
         $logoPositionX = $this->imageWidth - 200;
 
@@ -143,6 +160,11 @@ class ImageRender implements RenderInterface
         $this->imagick->compositeImage($logo, Imagick::COMPOSITE_DEFAULT, $logoPositionX, 40);
     }
 
+    /**
+     * Places the sponsors, if enabled, to the bottom of the image
+     *
+     * @throws \ImagickException
+     */
     private function renderSponsors()
     {
         if ($this->theme->sponsors) {
@@ -150,8 +172,8 @@ class ImageRender implements RenderInterface
             $sponsors->readImage(RENDERABLES . $this->theme->sponsors);
             $factor = $this->imageWidth / $sponsors->getImageWidth();
             $width = $sponsors->getImageHeight() * $factor;
-            $yFromBottom = $this->requiredSponsorSpacingFromBottom($width);
-            $sponsors->resizeImage($this->imageWidth, $sponsors->getImageHeight() * $factor, null, 0);
+            $yFromBottom = (int)$this->requiredSponsorSpacingFromBottom($width);
+            $sponsors->resizeImage($this->imageWidth, (int)($sponsors->getImageHeight() * $factor), 0, 0);
             $this->imagick->compositeImage($sponsors, Imagick::COMPOSITE_DEFAULT, 0, $yFromBottom);
         }
     }

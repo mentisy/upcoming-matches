@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Render\Helper;
 
@@ -16,18 +17,18 @@ use ImagickPixel;
  */
 class ImageMatchesHelper
 {
-    const DAY_FONT_SIZE = 18;
-    const MATCH_FONT_SIZE = 14;
+    public const DAY_FONT_SIZE = 18;
+    public const MATCH_FONT_SIZE = 14;
 
-    const IMAGE_START_X = 5;
-    const IMAGE_START_Y = 20;
+    public const IMAGE_START_X = 5;
+    public const IMAGE_START_Y = 20;
 
-    const DAY_SPACING_X = 30;
-    const DAY_SPACING_Y = 30;
+    public const DAY_SPACING_X = 30;
+    public const DAY_SPACING_Y = 30;
 
-    const MATCH_SPACING_Y = 25;
+    public const MATCH_SPACING_Y = 25;
 
-    public float $requiredWidth = self::IMAGE_START_X + self::DAY_SPACING_X;
+    public int $requiredWidth = self::IMAGE_START_X + self::DAY_SPACING_X;
     public float $requiredHeight = 0;
 
     public float $maxStringWidth = 0;
@@ -103,7 +104,7 @@ class ImageMatchesHelper
         $this->y = self::IMAGE_START_Y;
         foreach ($this->matchesCollection as $day => $matches) {
             $this->renderDay($day, $matches);
-            $this->y+= self::DAY_SPACING_Y;
+            $this->y += self::DAY_SPACING_Y;
             $this->incrementRequiredHeight(self::DAY_SPACING_Y);
         }
 
@@ -136,7 +137,14 @@ class ImageMatchesHelper
      */
     private function renderMatch(Match $match): void
     {
-        $text = sprintf("%s: %s - %s (%s - %s)", $match->time, $match->homeTeam, $match->awayTeam, $match->tournament, $match->pitch);
+        $text = sprintf(
+            "%s: %s - %s (%s - %s)",
+            $match->time,
+            $match->homeTeam,
+            $match->awayTeam,
+            $match->tournament,
+            $match->pitch,
+        );
         $this->maxStringWidth = max([$this->maxStringWidth, $this->calculateStringWidth($text)]);
         $this->maxStringWidthCurrent = max([$this->maxStringWidthCurrent, $this->calculateStringWidth($text)]);
 
@@ -163,9 +171,9 @@ class ImageMatchesHelper
      */
     private function startNewColumn(): void
     {
-        $this->x += self::DAY_SPACING_X + $this->maxStringWidthCurrent;
+        $this->x += (int)(self::DAY_SPACING_X + $this->maxStringWidthCurrent);
         $this->y = self::IMAGE_START_Y;
-        $this->incrementRequiredWidth(self::DAY_SPACING_X + $this->maxStringWidthCurrent);
+        $this->incrementRequiredWidth((int)(self::DAY_SPACING_X + $this->maxStringWidthCurrent));
         $this->incrementRequiredHeight($this->y);
         $this->maxStringWidthCurrent = 0;
         $this->columns++;
@@ -228,6 +236,6 @@ class ImageMatchesHelper
      */
     private function calculateStringWidth(string $text): int
     {
-        return $this->image->queryFontMetrics($this->matchText, $text)['textWidth'];
+        return (int)$this->image->queryFontMetrics($this->matchText, $text)['textWidth'];
     }
 }
