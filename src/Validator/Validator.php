@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Validator;
 
@@ -48,7 +49,6 @@ class Validator
      *
      * @param array $data Request data to validate against
      * @param array $messages Messages to use in the event of errors. Should contain the rule name as array key
-     *
      * @return void
      */
     public function __construct(array $data, array $messages = [])
@@ -63,7 +63,6 @@ class Validator
      * @param string $field Field to apply rule check to
      * @param string $rule Which rule to apply to field
      * @param array $passed Any passed values for the given rule
-     *
      * @return void
      */
     public function add(string $field, string $rule, array $passed = [])

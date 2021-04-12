@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Services;
 
@@ -11,7 +12,7 @@ class HandballService extends Service
     /**
      * Converts the returned JSON API response into an array of Match entities
      *
-     * @return Match[]
+     * @return \Avolle\UpcomingMatches\Match[]
      * @throws \JsonException
      */
     public function toArray(): array

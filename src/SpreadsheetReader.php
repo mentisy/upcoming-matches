@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches;
 
@@ -32,7 +33,7 @@ class SpreadsheetReader
             'homeTeam' => 'E',
             'awayTeam' => 'G',
             'pitch' => 'H',
-            'tournament' => 'I'
+            'tournament' => 'I',
         ],
     ];
 
@@ -84,19 +85,18 @@ class SpreadsheetReader
         $spreadsheet = $this->spreadsheet->getActiveSheet();
 
         for ($row = $firstRow; $row <= $lastRow; $row++) {
-
             try {
                 $dateValue = Date::excelToDateTimeObject(
                     $spreadsheet->getCell($this->cell($this->options['headers']['date'], $row))->getValue()
                 );
                 $matches[] = new Match(
                     $dateValue,
-                    $spreadsheet->getCell($this->cell($this->options['headers']['day'], $row)),
-                    $spreadsheet->getCell($this->cell($this->options['headers']['time'], $row)),
-                    $spreadsheet->getCell($this->cell($this->options['headers']['homeTeam'], $row)),
-                    $spreadsheet->getCell($this->cell($this->options['headers']['awayTeam'], $row)),
-                    $spreadsheet->getCell($this->cell($this->options['headers']['pitch'], $row)),
-                    $spreadsheet->getCell($this->cell($this->options['headers']['tournament'], $row)),
+                    $spreadsheet->getCell($this->cell($this->options['headers']['day'], $row))->getValue(),
+                    $spreadsheet->getCell($this->cell($this->options['headers']['time'], $row))->getValue(),
+                    $spreadsheet->getCell($this->cell($this->options['headers']['homeTeam'], $row))->getValue(),
+                    $spreadsheet->getCell($this->cell($this->options['headers']['awayTeam'], $row))->getValue(),
+                    $spreadsheet->getCell($this->cell($this->options['headers']['pitch'], $row))->getValue(),
+                    $spreadsheet->getCell($this->cell($this->options['headers']['tournament'], $row))->getValue(),
                 );
             } catch (Exception $e) {
                 throw new InvalidExcelConfiguration();
@@ -113,11 +113,11 @@ class SpreadsheetReader
      */
     private function firstRow(): int
     {
-    	if ($this->options['hasHeaders']) {
-    	    return 2;
+        if ($this->options['hasHeaders']) {
+            return 2;
         }
 
-    	return 1;
+        return 1;
     }
 
     /**
@@ -137,7 +137,7 @@ class SpreadsheetReader
      * @param int $row Row of cell
      * @return string
      */
-    private function cell(string $column, int $row)
+    private function cell(string $column, int $row): string
     {
         return sprintf("%s%s", $column, $row);
     }

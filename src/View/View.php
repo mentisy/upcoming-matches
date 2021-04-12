@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\View;
 
@@ -56,7 +57,7 @@ class View
      */
     public function setErrors(array $errors): void
     {
-    	$this->Error->setErrors($errors);
+        $this->Error->setErrors($errors);
     }
 
     /**
@@ -80,7 +81,7 @@ class View
      *
      * @return string
      */
-    public function content()
+    public function content(): string
     {
         return $this->content;
     }
