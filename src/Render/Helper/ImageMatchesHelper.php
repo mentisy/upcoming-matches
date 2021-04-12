@@ -3,6 +3,7 @@
 namespace Avolle\UpcomingMatches\Render\Helper;
 
 use Avolle\UpcomingMatches\Match;
+use Avolle\UpcomingMatches\Themes\Theme;
 use Cake\Collection\CollectionInterface;
 use Imagick;
 use ImagickDraw;
@@ -15,8 +16,6 @@ use ImagickPixel;
  */
 class ImageMatchesHelper
 {
-    const BACKGROUND_COLOR = '#C8271A';
-
     const DAY_FONT_SIZE = 18;
     const MATCH_FONT_SIZE = 14;
 
@@ -35,6 +34,7 @@ class ImageMatchesHelper
     public float $maxStringWidthCurrent = 0;
 
     private CollectionInterface $matchesCollection;
+    private Theme $theme;
 
     private Imagick $image;
     private ImagickDraw $dayText;
@@ -48,8 +48,11 @@ class ImageMatchesHelper
     private int $imageHeight;
     private int $allottedSpaceY;
 
+    private int $columns = 1;
+
     public function __construct(
         CollectionInterface $matchesCollection,
+        Theme $theme,
         int $imageWidth,
         int $imageHeight,
         int $allotedSpaceY
@@ -58,29 +61,34 @@ class ImageMatchesHelper
         $this->imageWidth = $imageWidth;
         $this->imageHeight = $imageHeight;
         $this->allottedSpaceY = $allotedSpaceY;
+        $this->theme = $theme;
 
         $this->dayText = new ImagickDraw();
-        $this->dayText->setFillColor(new ImagickPixel('#FFFFFF'));
+        $this->dayText->setFont($this->theme->font);
+        $this->dayText->setFillColor(new ImagickPixel($this->theme->fontColor));
         $this->dayText->setFontWeight(600);
         $this->dayText->setFontSize(self::DAY_FONT_SIZE);
 
         $this->dayShadowText = new ImagickDraw();
+        $this->dayShadowText->setFont($this->theme->font);
         $this->dayShadowText->setFontSize(self::DAY_FONT_SIZE);
         $this->dayShadowText->setFontWeight(600);
         $this->dayShadowText->setFillColor(new ImagickPixel('rgb(50,50,50'));
 
         $this->matchText = new ImagickDraw();
+        $this->matchText->setFont($this->theme->font);
         $this->matchText->setFontSize(self::MATCH_FONT_SIZE);
         $this->matchText->setFontWeight(600);
-        $this->matchText->setFillColor(new ImagickPixel("#FFFFFF"));
+        $this->matchText->setFillColor(new ImagickPixel($this->theme->fontColor));
 
         $this->matchShadowText = new ImagickDraw();
+        $this->matchShadowText->setFont($this->theme->font);
         $this->matchShadowText->setFontSize(self::MATCH_FONT_SIZE);
         $this->matchShadowText->setFontWeight(600);
         $this->matchShadowText->setFillColor(new ImagickPixel("rgb(50,50,50)"));
 
         $this->image = new Imagick();
-        $this->image->newImage($imageWidth, $imageHeight, self::BACKGROUND_COLOR, 'png');
+        $this->image->newImage($imageWidth, $imageHeight, $this->theme->backgroundColor, 'png');
     }
 
     /*
@@ -108,7 +116,7 @@ class ImageMatchesHelper
      */
     private function renderDay($day, $matches): void
     {
-        if (!$this->willWholeDayFit(count($matches))) {
+        if (!$this->willWholeDayFit(count($matches)) && !$this->theme->singleColumn) {
             $this->startNewColumn();
         }
 
@@ -128,7 +136,7 @@ class ImageMatchesHelper
      */
     private function renderMatch(Match $match): void
     {
-        $text = sprintf("%s: %s - %s (%s)", $match->time, $match->homeTeam, $match->awayTeam, $match->tournament);
+        $text = sprintf("%s: %s - %s (%s - %s)", $match->time, $match->homeTeam, $match->awayTeam, $match->tournament, $match->pitch);
         $this->maxStringWidth = max([$this->maxStringWidth, $this->calculateStringWidth($text)]);
         $this->maxStringWidthCurrent = max([$this->maxStringWidthCurrent, $this->calculateStringWidth($text)]);
 
@@ -160,6 +168,7 @@ class ImageMatchesHelper
         $this->incrementRequiredWidth(self::DAY_SPACING_X + $this->maxStringWidthCurrent);
         $this->incrementRequiredHeight($this->y);
         $this->maxStringWidthCurrent = 0;
+        $this->columns++;
     }
 
     /*

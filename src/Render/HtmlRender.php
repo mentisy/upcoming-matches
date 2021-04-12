@@ -17,6 +17,11 @@ class HtmlRender implements RenderInterface
         $this->matchesCollection = $matchesCollection;
     }
 
+    public function render(): void
+    {
+    }
+
+    /** @noinspection PhpUnusedLocalVariableInspection */
     public function output(): void
     {
         $matchesCollection = $this->matchesCollection;

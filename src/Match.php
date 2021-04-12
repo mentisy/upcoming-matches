@@ -83,9 +83,9 @@ class Match
         $this->date = $date;
         $this->day = $day;
         $this->time = $time;
-        $this->homeTeam = $homeTeam;
-        $this->awayTeam = $awayTeam;
-        $this->pitch = $pitch;
-        $this->tournament = $tournament;
+        $this->homeTeam = trim($homeTeam);
+        $this->awayTeam = trim($awayTeam);
+        $this->pitch = trim($pitch);
+        $this->tournament = trim($tournament);
     }
 }

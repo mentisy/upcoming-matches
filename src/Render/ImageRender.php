@@ -5,6 +5,7 @@ namespace Avolle\UpcomingMatches\Render;
 use Avolle\UpcomingMatches\Match;
 use Avolle\UpcomingMatches\Render\Helper\ImageMatchesHelper;
 use Avolle\UpcomingMatches\SportConfig;
+use Avolle\UpcomingMatches\Themes\Theme;
 use Cake\Collection\CollectionInterface;
 use Imagick;
 use ImagickDraw;
@@ -14,15 +15,14 @@ class ImageRender implements RenderInterface
 {
     private CollectionInterface $matchesCollection;
     private SportConfig $sportConfig;
+    private Theme $theme;
 
     private Imagick $imagick;
 
     private ImagickDraw $teamText;
     private ImagickDraw $sportText;
 
-    const BACKGROUND_COLOR = '#C8271A';
-
-    const IMAGE_INITIAL_WIDTH = 1400;
+    const IMAGE_INITIAL_WIDTH = 2000;
     const IMAGE_HEIGHT = 807;
 
     const TEAM_NAME_FONT_SIZE = 46;
@@ -33,7 +33,7 @@ class ImageRender implements RenderInterface
 
     const MATCH_GRID_X_START = 50;
     const MATCH_GRID_Y_START = 200;
-    const MATCH_GRID_Y_END = 620;
+    const MATCH_GRID_Y_END = self::IMAGE_HEIGHT - 170;
 
     private float $imageWidth = self::IMAGE_INITIAL_WIDTH;
 
@@ -44,7 +44,10 @@ class ImageRender implements RenderInterface
     {
         $this->matchesCollection = $this->groupByDate($matchesCollection);
         $this->sportConfig = $sportConfig;
+    }
 
+    public function render(): void
+    {
         $this->init();
         $this->renderMatches();
         $this->renderTeamDetails();
@@ -57,6 +60,11 @@ class ImageRender implements RenderInterface
         $imagick = $this->imagick;
 
         require TEMPLATES . 'image.php';
+    }
+
+    public function setTheme(Theme $theme): void
+    {
+        $this->theme = $theme;
     }
 
     /**
@@ -74,24 +82,28 @@ class ImageRender implements RenderInterface
 
     private function init()
     {
+        if (!isset($this->theme)) {
+            $this->theme = new Theme();
+        }
         $this->imagick = new Imagick();
-        $this->imagick->newImage($this->imageWidth, self::IMAGE_HEIGHT, self::BACKGROUND_COLOR, 'png');
+        $this->imagick->newImage($this->imageWidth, self::IMAGE_HEIGHT, $this->theme->backgroundColor, 'png');
 
         $this->teamText = new ImagickDraw();
-        $this->teamText->setFont(FONTS . 'Roboto-Bold.ttf');
+        $this->teamText->setFont($this->theme->font);
         $this->teamText->setFontSize(self::TEAM_NAME_FONT_SIZE);
-        $this->teamText->setFillColor(new ImagickPixel('#FFFFFF'));
+        $this->teamText->setFillColor(new ImagickPixel($this->theme->fontColor));
 
         $this->sportText = new ImagickDraw();
-        $this->sportText->setFont(FONTS . 'Roboto-Bold.ttf');
+        $this->sportText->setFont($this->theme->font);
         $this->sportText->setFontSize(self::SPORT_FONT_SIZE);
-        $this->sportText->setFillColor(new ImagickPixel('#FFFFFF'));
+        $this->sportText->setFillColor(new ImagickPixel($this->theme->fontColor));
     }
 
     private function renderMatches()
     {
         $matchesHelper = new ImageMatchesHelper(
             $this->matchesCollection,
+            $this->theme,
             $this->imageWidth,
             self::IMAGE_HEIGHT,
             self::MATCH_GRID_Y_END - self::MATCH_GRID_Y_START
@@ -118,7 +130,7 @@ class ImageRender implements RenderInterface
         $this->imagick->annotateImage($this->teamText, $x, $y, 0, strtoupper($this->sportConfig->teamName));
         $this->imagick->annotateImage($this->sportText, $x, $y + self::TEAM_NAME_FONT_SIZE, 0, $this->sportConfig->renderSubTitle);
         $logo = new Imagick();
-        $logo->readImage(RENDERABLES . 'team-logo-512.png');
+        $logo->readImage(RENDERABLES . $this->theme->logo);
         $logo->resizeImage(128, 128, null, 0);
 
         $logoPositionX = $this->imageWidth - 200;
@@ -133,17 +145,24 @@ class ImageRender implements RenderInterface
 
     private function renderSponsors()
     {
-        $sponsors = new Imagick();
-        $sponsors->readImage(RENDERABLES . 'sponsors.png');
-        $factor = $this->imageWidth / $sponsors->getImageWidth();
-        $width = $sponsors->getImageHeight() * $factor;
-        $yFromBottom = $this->requiredSponsorSpacingFromBottom($width);
-        $sponsors->resizeImage($this->imageWidth, $sponsors->getImageHeight() * $factor, null, 0);
-        $this->imagick->compositeImage($sponsors, Imagick::COMPOSITE_DEFAULT, 0, $yFromBottom);
+        if ($this->theme->sponsors) {
+            $sponsors = new Imagick();
+            $sponsors->readImage(RENDERABLES . $this->theme->sponsors);
+            $factor = $this->imageWidth / $sponsors->getImageWidth();
+            $width = $sponsors->getImageHeight() * $factor;
+            $yFromBottom = $this->requiredSponsorSpacingFromBottom($width);
+            $sponsors->resizeImage($this->imageWidth, $sponsors->getImageHeight() * $factor, null, 0);
+            $this->imagick->compositeImage($sponsors, Imagick::COMPOSITE_DEFAULT, 0, $yFromBottom);
+        }
     }
 
     private function requiredSponsorSpacingFromBottom(float $sponsorHeight): float
     {
         return self::IMAGE_HEIGHT - $sponsorHeight - 20; // 20 is margin from bottom
+    }
+
+    public function toFile(string $filename)
+    {
+        $this->imagick->writeImage($filename);
     }
 }
