@@ -43,5 +43,5 @@ class Theme
     /**
      * @var string
      */
-    public string $font = FONTS . 'bahnschrift.ttf';
+    public string $font = FONTS . 'mmrtextb.ttf';
 }
