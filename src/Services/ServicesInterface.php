@@ -38,4 +38,11 @@ interface ServicesInterface
      * @return array
      */
     public function toArray(): array;
+
+    /**
+     * Enables caching of results
+     *
+     * @return self
+     */
+    public function useCache(): self;
 }
