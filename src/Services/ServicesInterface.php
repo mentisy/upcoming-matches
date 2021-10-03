@@ -24,11 +24,8 @@ interface ServicesInterface
      * If cache enabled and a cached result exists, it will read from cache.
      * Otherwise the data is fetched using the protected variant of this method and then stored to cache (if enabled)
      *
-     * @param string $dateFrom
-     * @param string $dateTo
-     * @throws \Avolle\UpcomingMatches\Exception\InvalidResponseException
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \Psr\Cache\InvalidArgumentException
+     * @param string $dateFrom Fetch matches from this date
+     * @param string $dateTo Fetch matches until this date
      */
     public function fetch(string $dateFrom, string $dateTo): void;
 
