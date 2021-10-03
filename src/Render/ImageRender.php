@@ -5,42 +5,107 @@ namespace Avolle\UpcomingMatches\Render;
 
 use Avolle\UpcomingMatches\Match;
 use Avolle\UpcomingMatches\Render\Helper\ImageMatchesHelper;
+use Avolle\UpcomingMatches\Render\Helper\ImageSponsors;
+use Avolle\UpcomingMatches\Render\Helper\ImageTeamDetails;
 use Avolle\UpcomingMatches\SportConfig;
 use Avolle\UpcomingMatches\Themes\Theme;
 use Cake\Collection\CollectionInterface;
 use Imagick;
-use ImagickDraw;
-use ImagickPixel;
 
+/**
+ * ImageRender class
+ *
+ * Renders an image of upcoming matches
+ */
 class ImageRender implements RenderInterface
 {
+    /**
+     * Collection of matches to render
+     *
+     * @var \Cake\Collection\CollectionInterface
+     */
     private CollectionInterface $matchesCollection;
+
+    /**
+     * Sports Config
+     *
+     * @var \Avolle\UpcomingMatches\SportConfig
+     */
     private SportConfig $sportConfig;
+
+    /**
+     * Theme to render with
+     *
+     * @var \Avolle\UpcomingMatches\Themes\Theme
+     */
     private Theme $theme;
 
+    /**
+     * Imagick instance of complete image
+     *
+     * @var \Imagick
+     */
     private Imagick $imagick;
 
-    private ImagickDraw $teamText;
-    private ImagickDraw $sportText;
+    /**
+     * Padding around details
+     */
+    public const PADDING = 40;
 
-    public const IMAGE_INITIAL_WIDTH = 2000;
-    public const IMAGE_HEIGHT = 807;
+    /**
+     * Initial width of complete image. Needs to be large as to contain all matches. Will be cropped later
+     */
+    public const IMAGE_INITIAL_WIDTH = 3000;
 
-    public const TEAM_NAME_FONT_SIZE = 46;
-    public const SPORT_FONT_SIZE = 30;
+    /**
+     * Max height of a column before a new one should be started
+     */
+    public const MAX_COLUMN_HEIGHT = 600;
 
-    public const LOGO_POSITION_X = 50;
-    public const LOGO_POSITION_Y = 100;
-
+    /**
+     * Position to start rendering matches in the X axis
+     */
     public const MATCH_GRID_X_START = 50;
-    public const MATCH_GRID_Y_START = 200;
-    public const MATCH_GRID_Y_END = self::IMAGE_HEIGHT - 170;
 
-    private int $imageWidth = self::IMAGE_INITIAL_WIDTH;
+    /**
+     * Position to start rendering matches in the Y axis
+     */
+    public const MATCH_GRID_Y_START = 220;
 
-    private float $requiredMatchSizeX = self::MATCH_GRID_X_START;
-    private float $requiredMatchSizeY = 0;
+    /**
+     * Imagick instance of Match image
+     *
+     * @var \Imagick
+     */
+    protected Imagick $matchImage;
 
+    /**
+     * Required width of all matches rendered
+     *
+     * @var int
+     */
+    protected int $requiredMatchSizeX;
+
+    /**
+     * Required height of all matches rendered
+     *
+     * @var int
+     */
+    protected int $requiredMatchSizeY;
+
+    /**
+     * Required height of complete image
+     *
+     * @var float|int
+     */
+    private int $requiredHeight;
+
+    /**
+     * ImageRender constructor
+     *
+     * @param \Cake\Collection\CollectionInterface $matchesCollection Collection of matches
+     * @param \Avolle\UpcomingMatches\SportConfig $sportConfig Sports Config
+     */
     public function __construct(CollectionInterface $matchesCollection, SportConfig $sportConfig)
     {
         $this->matchesCollection = $this->groupByDate($matchesCollection);
@@ -50,24 +115,40 @@ class ImageRender implements RenderInterface
     /**
      * Renders the image with the current theme and configuration
      *
-     * @throws \ImagickException
+     * @return void
+     * @throws \ImagickException|\ImagickDrawException|\ImagickPixelException
      */
     public function render(): void
     {
-        $this->init();
-        $this->renderMatches();
-        $this->renderTeamDetails();
-        $this->renderSponsors();
+        if (!isset($this->theme)) {
+            $this->theme = new Theme();
+        }
+        $this->prepareMatches();
+        $teamDetails = new ImageTeamDetails($this->sportConfig, $this->theme, $this->requiredMatchSizeX);
+        if ($this->theme->sponsors) {
+            $sponsors = new ImageSponsors($this->theme, $this->requiredMatchSizeX);
+        }
+        $this->createCanvas($teamDetails, $sponsors ?? null);
     }
 
+    /**
+     * Output rendering to template
+     *
+     * @return void
+     */
     public function output(): void
     {
-        /** @noinspection PhpUnusedLocalVariableInspection */
         $imagick = $this->imagick;
 
         require TEMPLATES . 'image.php';
     }
 
+    /**
+     * Set a new Theme class to use for rendering. Must be set before any rendering starts
+     *
+     * @return void
+     * @param \Avolle\UpcomingMatches\Themes\Theme $theme Theme to use for future rendering
+     */
     public function setTheme(Theme $theme): void
     {
         $this->theme = $theme;
@@ -76,7 +157,7 @@ class ImageRender implements RenderInterface
     /**
      * Takes the collection of matches and groups them by date
      *
-     * @param \Cake\Collection\CollectionInterface $matchesCollection
+     * @param \Cake\Collection\CollectionInterface $matchesCollection Collection of matches
      * @return \Cake\Collection\CollectionInterface
      */
     private function groupByDate(CollectionInterface $matchesCollection): CollectionInterface
@@ -86,47 +167,98 @@ class ImageRender implements RenderInterface
         );
     }
 
-    private function init()
-    {
-        if (!isset($this->theme)) {
-            $this->theme = new Theme();
-        }
-        $this->imagick = new Imagick();
-        $this->imagick->newImage($this->imageWidth, self::IMAGE_HEIGHT, $this->theme->backgroundColor, 'png');
-
-        $this->teamText = new ImagickDraw();
-        $this->teamText->setFont($this->theme->font);
-        $this->teamText->setFontSize(self::TEAM_NAME_FONT_SIZE);
-        $this->teamText->setFillColor(new ImagickPixel($this->theme->fontColor));
-
-        $this->sportText = new ImagickDraw();
-        $this->sportText->setFont($this->theme->font);
-        $this->sportText->setFontSize(self::SPORT_FONT_SIZE);
-        $this->sportText->setFillColor(new ImagickPixel($this->theme->fontColor));
-    }
-
-    private function renderMatches()
+    /**
+     * Prepares all matches for rendering onto the main image
+     *
+     * @return void
+     * @throws \ImagickException|\ImagickPixelException|\ImagickDrawException
+     */
+    private function prepareMatches(): void
     {
         $matchesHelper = new ImageMatchesHelper(
             $this->matchesCollection,
             $this->theme,
-            $this->imageWidth,
-            self::IMAGE_HEIGHT,
-            self::MATCH_GRID_Y_END - self::MATCH_GRID_Y_START
+            self::IMAGE_INITIAL_WIDTH,
+            self::MAX_COLUMN_HEIGHT,
+            self::MAX_COLUMN_HEIGHT,
         );
 
-        $image = $matchesHelper->renderMatches();
+        $this->matchImage = $matchesHelper->renderMatches();
 
-        $this->requiredMatchSizeX += $matchesHelper->getRequiredWidth();
-        $this->requiredMatchSizeY = $matchesHelper->getRequiredHeight();
+        $this->requiredMatchSizeX = (int)$matchesHelper->getRequiredWidth();
+        $this->requiredMatchSizeY = (int)$matchesHelper->getRequiredHeight();
+    }
 
-        $this->imageWidth = (int)$this->requiredMatchSizeX + 30;
+    /**
+     * Writes the Imagick instance into a file
+     *
+     * @param string $filename Filename of image, with path
+     * @return void
+     * @throws \ImagickException
+     */
+    public function toFile(string $filename): void
+    {
+        $this->imagick->writeImage($filename);
+    }
 
-        $this->imagick->cropImage($this->imageWidth, self::IMAGE_HEIGHT, 0, 0);
-        $this->imagick->setSize($this->imageWidth, self::IMAGE_HEIGHT);
+    /**
+     * Creates a canvas, onto which we will render all details (matches, team details and sponsor)
+     *
+     * @param \Avolle\UpcomingMatches\Render\Helper\ImageTeamDetails $imageTeamDetails Instance of TeamDetails render helper
+     * @param \Avolle\UpcomingMatches\Render\Helper\ImageSponsors|null $sponsors Instance of Sponsors render helper
+     * @return void
+     * @throws \ImagickException
+     */
+    private function createCanvas(ImageTeamDetails $imageTeamDetails, ?ImageSponsors $sponsors): void
+    {
+        $this->requiredHeight = (int)($this->requiredMatchSizeY
+            + $imageTeamDetails->getImagick()->getImageHeight()
+            + ($sponsors->getImagick()->getImageHeight() ?? 0)
+            + (self::PADDING * 3)
+        );
 
+        $this->imagick = new Imagick();
+        $this->imagick->newImage(
+            $this->requiredMatchSizeX + self::PADDING,
+            $this->requiredHeight,
+            $this->theme->backgroundColor,
+            'png',
+        );
+
+        $this->imagick->cropImage($this->requiredMatchSizeX + self::PADDING, $this->requiredHeight, 0, 0);
+
+        $this->renderTeamDetails($imageTeamDetails);
+        $this->renderMatches();
+
+        $this->renderSponsors($sponsors);
+    }
+
+    /**
+     * Renders team details onto complete image
+     *
+     * @param \Avolle\UpcomingMatches\Render\Helper\ImageTeamDetails $imageTeamDetails Instance of TeamDetails render helper
+     * @throws \ImagickException
+     */
+    private function renderTeamDetails(ImageTeamDetails $imageTeamDetails): void
+    {
         $this->imagick->compositeImage(
-            $image,
+            $imageTeamDetails->getImagick(),
+            Imagick::COMPOSITE_DEFAULT,
+            0,
+            0,
+        );
+    }
+
+    /**
+     * Renders matches onto complete image
+     *
+     * @return void
+     * @throws \ImagickException
+     */
+    private function renderMatches(): void
+    {
+        $this->imagick->compositeImage(
+            $this->matchImage,
             Imagick::COMPOSITE_DEFAULT,
             self::MATCH_GRID_X_START,
             self::MATCH_GRID_Y_START,
@@ -134,57 +266,31 @@ class ImageRender implements RenderInterface
     }
 
     /**
-     * Places the team name, type and logo on top of the image
+     * Renders sponsors onto complete image
      *
+     * @param \Avolle\UpcomingMatches\Render\Helper\ImageSponsors|null $sponsors Instance of Sponsors render helper
      * @throws \ImagickException
      */
-    private function renderTeamDetails()
+    private function renderSponsors(?ImageSponsors $sponsors): void
     {
-        $x = self::LOGO_POSITION_X;
-        $y = self::LOGO_POSITION_Y;
-        $subTitleY = $y + self::TEAM_NAME_FONT_SIZE;
+        $sponsorFromBottom = $this->requiredSponsorSpacingFromBottom($sponsors->getImagick()->getImageHeight());
 
-        $this->imagick->annotateImage($this->teamText, $x, $y, 0, strtoupper($this->sportConfig->teamName));
-        $this->imagick->annotateImage($this->sportText, $x, $subTitleY, 0, $this->sportConfig->renderSubTitle);
-        $logo = new Imagick();
-        $logo->readImage(RENDERABLES . $this->theme->logo);
-        $logo->resizeImage(128, 128, 0, 0);
-
-        $logoPositionX = $this->imageWidth - 200;
-
-        if ($this->imageWidth <= 500) {
-            $logoPositionX += 30;
-        }
-
-        $logoPositionX = max([250, $logoPositionX]); // 250px is min X position to avoid hitting team name
-        $this->imagick->compositeImage($logo, Imagick::COMPOSITE_DEFAULT, $logoPositionX, 40);
+        $this->imagick->compositeImage(
+            $sponsors->getImagick(),
+            Imagick::COMPOSITE_DEFAULT,
+            (int)(self::PADDING / 2),
+            $sponsorFromBottom,
+        );
     }
 
     /**
-     * Places the sponsors, if enabled, to the bottom of the image
+     * Calculate the position from the bottom of complete image required to place the sponsor image
      *
-     * @throws \ImagickException
+     * @param float $sponsorHeight Sponsor image height
+     * @return int
      */
-    private function renderSponsors()
+    private function requiredSponsorSpacingFromBottom(float $sponsorHeight): int
     {
-        if ($this->theme->sponsors) {
-            $sponsors = new Imagick();
-            $sponsors->readImage(RENDERABLES . $this->theme->sponsors);
-            $factor = $this->imageWidth / $sponsors->getImageWidth();
-            $width = $sponsors->getImageHeight() * $factor;
-            $yFromBottom = (int)$this->requiredSponsorSpacingFromBottom($width);
-            $sponsors->resizeImage($this->imageWidth, (int)($sponsors->getImageHeight() * $factor), 0, 0);
-            $this->imagick->compositeImage($sponsors, Imagick::COMPOSITE_DEFAULT, 0, $yFromBottom);
-        }
-    }
-
-    private function requiredSponsorSpacingFromBottom(float $sponsorHeight): float
-    {
-        return self::IMAGE_HEIGHT - $sponsorHeight - 20; // 20 is margin from bottom
-    }
-
-    public function toFile(string $filename)
-    {
-        $this->imagick->writeImage($filename);
+        return (int)($this->requiredHeight - $sponsorHeight - self::PADDING);
     }
 }

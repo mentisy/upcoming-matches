@@ -17,51 +17,173 @@ use ImagickPixel;
  */
 class ImageMatchesHelper
 {
+    /**
+     * Font size of Day text
+     */
     public const DAY_FONT_SIZE = 18;
+
+    /**
+     * Font size of Match text
+     */
     public const MATCH_FONT_SIZE = 14;
 
+    /**
+     * First position of added details in X axis
+     */
     public const IMAGE_START_X = 5;
+
+    /**
+     * First position of added details in Y axix
+     */
     public const IMAGE_START_Y = 20;
 
+    /**
+     * Spacing between days in the X axis
+     */
     public const DAY_SPACING_X = 30;
+
+    /**
+     * Spacing between days in the Y axis
+     */
     public const DAY_SPACING_Y = 30;
 
+    /**
+     * Spacing between matches in the Y axis
+     */
     public const MATCH_SPACING_Y = 25;
 
+    /**
+     * Required width of complete image
+     *
+     * @var int
+     */
     public int $requiredWidth = self::IMAGE_START_X + self::DAY_SPACING_X;
-    public float $requiredHeight = 0;
 
+    /**
+     * Width of the widest string
+     *
+     * @var float|int
+     */
     public float $maxStringWidth = 0;
+
+    /**
+     * Width of the widest string on the current column of matches
+     *
+     * @var float|int
+     */
     public float $maxStringWidthCurrent = 0;
 
+    /**
+     * Collection of Matches
+     *
+     * @var \Cake\Collection\CollectionInterface
+     */
     private CollectionInterface $matchesCollection;
+
+    /**
+     * Theme class
+     *
+     * @var \Avolle\UpcomingMatches\Themes\Theme
+     */
     private Theme $theme;
 
+    /**
+     * Imagick instance of complete image
+     *
+     * @var \Imagick
+     */
     private Imagick $image;
+
+    /**
+     * Day Text ImagickDraw instance
+     *
+     * @var \ImagickDraw
+     */
     private ImagickDraw $dayText;
+
+    /**
+     * Match Text ImagickDraw instance
+     *
+     * @var \ImagickDraw
+     */
     private ImagickDraw $matchText;
+
+    /**
+     * Day Shadow Text ImagickDraw instance
+     *
+     * @var \ImagickDraw
+     */
     private ImagickDraw $dayShadowText;
+
+    /**
+     * Match Shadow Text ImagickDraw instance
+     *
+     * @var \ImagickDraw
+     */
     private ImagickDraw $matchShadowText;
 
+    /**
+     * Current position of X axis to render next detail
+     *
+     * @var int
+     */
     private int $x;
-    private int $y;
-    private int $imageWidth;
-    private int $imageHeight;
-    private int $allottedSpaceY;
 
+    /**
+     * Current position of Y axis to render next detail
+     *
+     * @var int
+     */
+    private int $y;
+
+    /**
+     * Count of columns on the current render
+     *
+     * @var int
+     */
     private int $columns = 1;
 
+    /**
+     * Height of the highest column
+     *
+     * @var int
+     */
+    private int $maxColumnHeight;
+
+    /**
+     * Width of the widest string on the current column of matches
+     * Height of the highest column
+     *
+     * @var int
+     */
+    private int $maxRequiredColumnHeight = 0;
+
+    /**
+     * Height of the current column rendering
+     *
+     * @var int
+     */
+    private int $maxRequiredColumnHeightCurrent = 0;
+
+    /**
+     * ImageMatchesHelper constructor
+     *
+     * @param \Cake\Collection\CollectionInterface $matchesCollection Collection of matches
+     * @param \Avolle\UpcomingMatches\Themes\Theme $theme Theme
+     * @param int $imageWidth Width of image
+     * @param int $imageHeight Height of image
+     * @param int $maxColumnHeight Max height of column before starting a new column
+     * @throws \ImagickDrawException|\ImagickException|\ImagickPixelException
+     */
     public function __construct(
         CollectionInterface $matchesCollection,
         Theme $theme,
         int $imageWidth,
         int $imageHeight,
-        int $allotedSpaceY
+        int $maxColumnHeight
     ) {
         $this->matchesCollection = $matchesCollection;
-        $this->imageWidth = $imageWidth;
-        $this->imageHeight = $imageHeight;
-        $this->allottedSpaceY = $allotedSpaceY;
+        $this->maxColumnHeight = $maxColumnHeight;
         $this->theme = $theme;
 
         $this->dayText = new ImagickDraw();
@@ -92,11 +214,13 @@ class ImageMatchesHelper
         $this->image->newImage($imageWidth, $imageHeight, $this->theme->backgroundColor, 'png');
     }
 
-    /*
+    /**
      * Will render all days and their matches
      * Initiates the x and y coordinates
      *
      * Returns the rendered imge
+     *
+     * @throws \ImagickException
      */
     public function renderMatches(): Imagick
     {
@@ -105,17 +229,22 @@ class ImageMatchesHelper
         foreach ($this->matchesCollection as $day => $matches) {
             $this->renderDay($day, $matches);
             $this->y += self::DAY_SPACING_Y;
-            $this->incrementRequiredHeight(self::DAY_SPACING_Y);
+            $this->maxRequiredColumnHeightCurrent += self::DAY_SPACING_Y;
         }
+        $this->maxRequiredColumnHeight = max($this->maxRequiredColumnHeight, $this->maxRequiredColumnHeightCurrent);
 
         return $this->image;
     }
 
-    /*
+    /**
      * Will render a day, including matches for that day, onto the canvas
      * Checks whether the whole day (with matches) will fit into the current column, otherwise start a new column
+     *
+     * @param string $day Day name
+     * @param \Cake\Collection\CollectionInterface $matches Matches collection of current day
+     * @throws \ImagickException
      */
-    private function renderDay($day, $matches): void
+    private function renderDay(string $day, CollectionInterface $matches): void
     {
         if (!$this->willWholeDayFit(count($matches)) && !$this->theme->singleColumn) {
             $this->startNewColumn();
@@ -124,16 +253,19 @@ class ImageMatchesHelper
         $this->image->annotateImage($this->dayShadowText, $this->x + 1, $this->y + 1, 0, ucfirst($day));
         $this->image->annotateImage($this->dayText, $this->x, $this->y, 0, ucfirst($day));
         $this->y += 25; // Spacing between day header and the first match of the day
-        $this->incrementRequiredHeight(25);
+        $this->maxRequiredColumnHeightCurrent += 25;
         foreach ($matches as $match) {
             $this->renderMatch($match);
         }
     }
 
-    /*
+    /**
      * Will render a match onto the canvas, using the current x and y coordinates.
      * Will also check for the longest string width, so that can be added to required width when cropping the image
      * Adds onto the required height property
+     *
+     * @param \Avolle\UpcomingMatches\Match $match Match to render
+     * @throws \ImagickException
      */
     private function renderMatch(Match $match): void
     {
@@ -147,74 +279,67 @@ class ImageMatchesHelper
         );
         $this->maxStringWidth = max([$this->maxStringWidth, $this->calculateStringWidth($text)]);
         $this->maxStringWidthCurrent = max([$this->maxStringWidthCurrent, $this->calculateStringWidth($text)]);
+        $this->maxRequiredColumnHeightCurrent += self::MATCH_SPACING_Y;
 
         $this->image->annotateImage($this->matchShadowText, $this->x + 1, $this->y + 1, 0, $text);
         $this->image->annotateImage($this->matchText, $this->x, $this->y, 0, $text);
         $this->y += self::MATCH_SPACING_Y;
-        $this->incrementRequiredHeight(self::MATCH_SPACING_Y);
     }
 
-    /*
+    /**
      * Calculate whether the whole day will fit into the current column.
      * If not start a new column of days and increment the required width property
+     *
+     * @param int $matchCount
+     * @return bool
      */
     private function willWholeDayFit(int $matchCount): bool
     {
-        $requiredPixels = $matchCount * self::MATCH_SPACING_Y;
+        $requiredPixels = $matchCount * (self::MATCH_SPACING_Y + 13);
 
-        return $this->y + $requiredPixels <= $this->allottedSpaceY;
+        return $this->y + $requiredPixels <= $this->maxColumnHeight;
     }
 
-    /*
+    /**
      * Will start a new column in which the next days will be rendered onto
      * Adds onto the required width of the entire canvas
+     *
+     * @return void
      */
     private function startNewColumn(): void
     {
         $this->x += (int)(self::DAY_SPACING_X + $this->maxStringWidthCurrent);
         $this->y = self::IMAGE_START_Y;
         $this->incrementRequiredWidth((int)(self::DAY_SPACING_X + $this->maxStringWidthCurrent));
-        $this->incrementRequiredHeight($this->y);
+        $this->maxRequiredColumnHeight = max($this->maxRequiredColumnHeight, $this->maxRequiredColumnHeightCurrent);
+        $this->maxRequiredColumnHeightCurrent = 0;
         $this->maxStringWidthCurrent = 0;
         $this->columns++;
     }
 
-    /*
+    /**
      * Add onto the necessary width of the entire canvas
      * If the required width is larger than the image width,
-     * override that that with the image width property
+     * override that with the image width property
+     *
+     * @param int $increment How many pixels to increment
+     * @return void
      */
     private function incrementRequiredWidth(int $increment): void
     {
         $this->requiredWidth += $increment;
-
-        if ($this->requiredWidth > $this->imageWidth) {
-            $this->requiredWidth = $this->imageWidth;
-        }
-    }
-
-    /*
-     * Add onto the necessary height of the entire canvas
-     * If the required height is larger than the allotted space,
-     * override that that with the allotted space property
-     */
-    private function incrementRequiredHeight(int $increment): void
-    {
-        $this->requiredHeight += $increment;
-
-        if ($this->requiredHeight > $this->allottedSpaceY) {
-            $this->requiredHeight = $this->allottedSpaceY;
-        }
     }
 
     /**
-     * Get the required image width, which is the required width + the width of the longest string
+     * Get the required image width, which is the required width + the width of the longest string of last column
      *
      * @return float|int
      */
     public function getRequiredWidth()
     {
-        return $this->requiredWidth + $this->maxStringWidth;
+        $paddingRight = self::IMAGE_START_X + self::DAY_SPACING_X;
+
+        return $this->requiredWidth + $this->maxStringWidthCurrent + $paddingRight;
     }
 
     /**
@@ -224,7 +349,7 @@ class ImageMatchesHelper
      */
     public function getRequiredHeight()
     {
-        return $this->requiredHeight;
+        return $this->maxRequiredColumnHeight - self::DAY_SPACING_X;
     }
 
     /**
@@ -233,6 +358,7 @@ class ImageMatchesHelper
      *
      * @param string $text Text to calculate width of
      * @return int
+     * @throws \ImagickException
      */
     private function calculateStringWidth(string $text): int
     {
