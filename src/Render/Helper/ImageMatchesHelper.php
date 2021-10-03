@@ -241,12 +241,12 @@ class ImageMatchesHelper
      * Checks whether the whole day (with matches) will fit into the current column, otherwise start a new column
      *
      * @param string $day Day name
-     * @param \Cake\Collection\CollectionInterface $matches Matches collection of current day
+     * @param array $matches Matches collection of current day
      * @throws \ImagickException
      */
-    private function renderDay(string $day, CollectionInterface $matches): void
+    private function renderDay(string $day, array $matches): void
     {
-        if (!$this->willWholeDayFit($matches->count()) && !$this->theme->singleColumn) {
+        if (!$this->willWholeDayFit(count($matches)) && !$this->theme->singleColumn) {
             $this->startNewColumn();
         }
 
