@@ -96,7 +96,7 @@ class ImageRender implements RenderInterface
     /**
      * Required height of complete image
      *
-     * @var float|int
+     * @var int
      */
     private int $requiredHeight;
 

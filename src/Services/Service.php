@@ -96,7 +96,7 @@ abstract class Service implements ServicesInterface
             'query' => $this->buildParams($dateFrom, $dateTo),
         ]);
 
-        if (!$result->getStatusCode() === 200) {
+        if ($result->getStatusCode() !== 200) {
             throw new InvalidResponseException();
         }
 

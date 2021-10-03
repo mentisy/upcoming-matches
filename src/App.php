@@ -69,6 +69,7 @@ class App
     /**
      * Run the application
      *
+     * @return \Avolle\UpcomingMatches\View\View|\Avolle\UpcomingMatches\App
      * @throws \Avolle\UpcomingMatches\Exception\InvalidRendererException
      * @throws \Avolle\UpcomingMatches\Exception\InvalidSportException
      * @throws \Avolle\UpcomingMatches\Exception\MissingSportConfigurationException

@@ -62,14 +62,14 @@ class ImageMatchesHelper
     /**
      * Width of the widest string
      *
-     * @var float|int
+     * @var float
      */
     public float $maxStringWidth = 0;
 
     /**
      * Width of the widest string on the current column of matches
      *
-     * @var float|int
+     * @var float
      */
     public float $maxStringWidthCurrent = 0;
 
@@ -246,7 +246,7 @@ class ImageMatchesHelper
      */
     private function renderDay(string $day, CollectionInterface $matches): void
     {
-        if (!$this->willWholeDayFit(count($matches)) && !$this->theme->singleColumn) {
+        if (!$this->willWholeDayFit($matches->count()) && !$this->theme->singleColumn) {
             $this->startNewColumn();
         }
 

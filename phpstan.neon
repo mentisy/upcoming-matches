@@ -1,0 +1,15 @@
+parameters:
+    level: 6
+    bootstrapFiles:
+        - paths.php
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+    paths:
+        - src
+    ignoreErrors:
+        -
+            message: '#PHPDoc tag \@throws with type Avolle\\UpcomingMatches\\Exception\\InvalidResponseException\|GuzzleHttp\\Exception\\GuzzleException\|Psr\\Cache\\InvalidArgumentException is not subtype of Throwable#'
+            path: src/Services/Service.php
+        -
+            message: '#Constructor of class Avolle\\UpcomingMatches\\Render\\HtmlRender has an unused parameter \$sportConfig.#'
+            path: src/Render/HtmlRender.php
