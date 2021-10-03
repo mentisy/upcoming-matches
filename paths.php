@@ -1,6 +1,8 @@
 <?php
 
-define('DS', DIRECTORY_SEPARATOR);
+if (!defined('DS')) {
+    define('DS', DIRECTORY_SEPARATOR);
+}
 define('ROOT', __DIR__ . DS);
 define('LOGS', ROOT . 'logs' . DS);
 define('FILES', ROOT . 'files'. DS);
