@@ -39,6 +39,6 @@ class HandballService extends Service
             );
         }
 
-        return $matches;
+        return collection($matches)->sortBy(fn (Match $match) => $match->date, SORT_ASC)->toArray();
     }
 }
