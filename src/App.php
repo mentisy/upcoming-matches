@@ -75,6 +75,7 @@ class App
      * @throws \Avolle\UpcomingMatches\Exception\MissingSportConfigurationException
      * @throws \Avolle\UpcomingMatches\Exception\RuleNotFoundException
      * @throws \Avolle\UpcomingMatches\Exception\MissingViewException
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidFilterableException
      */
     public function run()
     {
@@ -99,6 +100,7 @@ class App
         $this->service->useCache()->fetch($dateFrom, $dateTo);
 
         $matches = $this->service->toArray();
+        $matches = $this->filterMatches($matches);
 
         if (empty($matches)) {
             $this->view->setInfoMessage('Ingen kamper funnet.');
@@ -215,5 +217,21 @@ class App
     private function validServices(): array
     {
         return array_keys($this->appConfig['sports']);
+    }
+
+    /**
+     * Filter matches based on the sports configuration.
+     *
+     * @param array<int, \Avolle\UpcomingMatches\Match> $matches Matches to use in filter
+     * @throws \Avolle\UpcomingMatches\Exception\InvalidFilterableException
+     */
+    protected function filterMatches(array $matches): array
+    {
+        if (!isset($this->sportConfig->filterable)) {
+            return $matches;
+        }
+        $filterable = $this->sportConfig->getFilterableClass();
+
+        return $filterable->filter($matches, $this->sportConfig);
     }
 }
