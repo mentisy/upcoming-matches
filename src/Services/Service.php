@@ -15,7 +15,7 @@ abstract class Service implements ServicesInterface
     protected ServicesConfig $config;
     protected Client $client;
     protected ResponseInterface $result;
-    protected string $content;
+    protected array $results = [];
     protected bool $useCache = false;
 
     /**
@@ -56,13 +56,13 @@ abstract class Service implements ServicesInterface
 
             return;
         }
-        $this->content = $this->cache()->get(
+        $this->results = $this->cache()->get(
             $this->cacheKey($dateFrom, $dateTo),
             function (ItemInterface $item) use ($dateFrom, $dateTo) {
                 $item->expiresAfter(24 * 60 * 60);
                 $this->_fetch($dateFrom, $dateTo);
 
-                return $this->content;
+                return $this->results;
             }
         );
     }
@@ -92,15 +92,22 @@ abstract class Service implements ServicesInterface
     {
         $client = $this->client();
 
-        $result = $client->request('GET', $this->config->apiUri, [
-            'query' => $this->buildParams($dateFrom, $dateTo),
-        ]);
-
-        if ($result->getStatusCode() !== 200) {
-            throw new InvalidResponseException();
+        $configParams = $this->config->params;
+        if ($this->isMultiResource($configParams)) {
+            $params = $configParams;
+        } else {
+            $params[0] = $this->config->params;
         }
 
-        $this->content = $result->getBody()->getContents();
+        foreach ($params as $paramsSet) {
+            $result = $client->request('GET', $this->config->apiUri, [
+                'query' => $this->buildParams($paramsSet, $dateFrom, $dateTo),
+            ]);
+            if ($result->getStatusCode() !== 200) {
+                throw new InvalidResponseException();
+            }
+            $this->results[] = $result->getBody()->getContents();
+        }
     }
 
     /**
@@ -117,18 +124,31 @@ abstract class Service implements ServicesInterface
      * Responsible for merging the ServiceConfig's extra parameters with the required `from` and `to` date fields
      * The fields to use in the query string for selecting the date period is decided by the ServiceConfig instance
      *
+     * @param array $params Params to merge with dates
      * @param string $dateFrom Start date to get matches for
      * @param string $dateTo End date to get matches for
      * @return string Converted query string
      */
-    protected function buildParams(string $dateFrom, string $dateTo): string
+    protected function buildParams(array $params, string $dateFrom, string $dateTo): string
     {
         $dateParams = [
             $this->config->dateFields['from'] => $dateFrom,
             $this->config->dateFields['to'] => $dateTo,
         ];
-        $params = $this->config->params + $dateParams;
+        $params = $params + $dateParams;
 
         return http_build_query($params, '', '&', PHP_QUERY_RFC3986);
+    }
+
+    /**
+     * Should we fetch more than one result from the API. If the params parameter contains more than one array,
+     * we should fetch matches from more than one resource.
+     *
+     * @param array|array[] $params Parameters to use in request body. Either an array of keys or an array of arrays of keys
+     * @return bool
+     */
+    protected function isMultiResource(array $params): bool
+    {
+        return isset($params[0]) && is_array($params[0]);
     }
 }

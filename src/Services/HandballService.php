@@ -5,6 +5,7 @@ namespace Avolle\UpcomingMatches\Services;
 
 use Avolle\UpcomingMatches\Match;
 use Cake\Chronos\Chronos;
+use Cake\Collection\CollectionInterface;
 use JsonException;
 
 class HandballService extends Service
@@ -17,7 +18,24 @@ class HandballService extends Service
      */
     public function toArray(): array
     {
-        $decodedMatches = json_decode($this->content, true);
+        $results = collection([]);
+        foreach ($this->results as $result) {
+            $results = $results->append($this->extractResult($result));
+        }
+
+        return $results->sortBy(fn(Match $match) => $match->date, SORT_ASC)->toArray();
+    }
+
+    /**
+     * Extract matches from an API result
+     *
+     * @param string $result API result in string
+     * @return \Cake\Collection\CollectionInterface
+     * @throws \JsonException
+     */
+    protected function extractResult(string $result): CollectionInterface
+    {
+        $decodedMatches = json_decode($result, true);
 
         if (is_null($decodedMatches)) {
             throw new JsonException('The JSON data could not be converted');
@@ -39,6 +57,6 @@ class HandballService extends Service
             );
         }
 
-        return collection($matches)->sortBy(fn (Match $match) => $match->date, SORT_ASC)->toArray();
+        return collection($matches);
     }
 }
