@@ -29,7 +29,7 @@ class FootballService extends Service
             ));
         }
 
-        return $results->toList();
+        return $results->toArray(false);
     }
 
     /**
