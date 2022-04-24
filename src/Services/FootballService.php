@@ -21,7 +21,15 @@ class FootballService extends Service
      */
     public function toArray(): array
     {
-        return $this->prepareSpreadsheetFile(fn(string $filename) => (new SpreadsheetReader($filename))->getMatches());
+        $results = collection([]);
+        foreach ($this->results as $result) {
+            $results = $results->append($this->prepareSpreadsheetFile(
+                $result,
+                fn(string $filename) => (new SpreadsheetReader($filename))->getMatches(),
+            ));
+        }
+
+        return $results->toArray();
     }
 
     /**
@@ -31,10 +39,10 @@ class FootballService extends Service
      * @param callable $callback The callback to read and convert spreadsheet data
      * @return \Avolle\UpcomingMatches\Match[]
      */
-    protected function prepareSpreadsheetFile(callable $callback): array
+    protected function prepareSpreadsheetFile(string $result, callable $callback): array
     {
         $tmpFile = tmpfile();
-        fwrite($tmpFile, $this->content);
+        fwrite($tmpFile, $result);
         $filename = stream_get_meta_data($tmpFile)['uri'];
 
         $matches = $callback($filename);
