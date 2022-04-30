@@ -19,9 +19,9 @@ class TeamNameFilter implements FilterableInterface
         $filteredMatches = [];
         foreach ($matches as $match) {
             if (strpos($match->homeTeam, $teamName) !== false) {
-                $filteredMatches[] = $match;
+                $filteredMatches[$match->matchId] = $match;
             } elseif (strpos($match->awayTeam, $teamName) !== false) {
-                $filteredMatches[] = $match;
+                $filteredMatches[$match->matchId] = $match;
             }
         }
 

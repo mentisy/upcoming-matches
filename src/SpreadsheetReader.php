@@ -34,6 +34,7 @@ class SpreadsheetReader
             'awayTeam' => 'G',
             'pitch' => 'H',
             'tournament' => 'I',
+            'matchId' => 'J',
         ],
     ];
 
@@ -97,6 +98,7 @@ class SpreadsheetReader
                     $spreadsheet->getCell($this->cell($this->options['headers']['awayTeam'], $row))->getValue(),
                     $spreadsheet->getCell($this->cell($this->options['headers']['pitch'], $row))->getValue(),
                     $spreadsheet->getCell($this->cell($this->options['headers']['tournament'], $row))->getValue(),
+                    $spreadsheet->getCell($this->cell($this->options['headers']['matchId'], $row))->getValue(),
                 );
             } catch (Exception $e) {
                 throw new InvalidExcelConfiguration();
