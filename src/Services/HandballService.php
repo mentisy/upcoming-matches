@@ -53,7 +53,8 @@ class HandballService extends Service
                 $match['Hjemmelag'],
                 $match['Bortelag'],
                 $match['Bane'],
-                $match['Turnering']
+                $match['Turnering'],
+                $match['Kampnr']
             );
         }
 

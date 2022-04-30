@@ -62,6 +62,13 @@ class Match
     public string $tournament;
 
     /**
+     * Id of match
+     *
+     * @var string
+     */
+    public string $matchId;
+
+    /**
      * Match constructor.
      *
      * @param \DateTime $date Date
@@ -71,6 +78,7 @@ class Match
      * @param string $awayTeam Away team
      * @param string $pitch Pitch
      * @param string $tournament Tournament
+     * @param string $matchId Match id
      */
     public function __construct(
         DateTime $date,
@@ -79,7 +87,8 @@ class Match
         string $homeTeam,
         string $awayTeam,
         string $pitch,
-        string $tournament
+        string $tournament,
+        string $matchId
     ) {
         $this->date = $date;
         $this->day = $day;
@@ -88,5 +97,6 @@ class Match
         $this->awayTeam = trim($awayTeam);
         $this->pitch = trim($pitch);
         $this->tournament = trim($tournament);
+        $this->matchId = trim($matchId);
     }
 }
