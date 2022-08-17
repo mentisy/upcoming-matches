@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Services;
 
-use Avolle\UpcomingMatches\Match;
+use Avolle\UpcomingMatches\Game;
 use Cake\Chronos\Chronos;
 use Cake\Collection\CollectionInterface;
 use JsonException;
@@ -13,7 +13,7 @@ class HandballService extends Service
     /**
      * Converts the returned JSON API response into an array of Match entities
      *
-     * @return \Avolle\UpcomingMatches\Match[]
+     * @return \Avolle\UpcomingMatches\Game[]
      * @throws \JsonException
      */
     public function toArray(): array
@@ -23,7 +23,7 @@ class HandballService extends Service
             $results = $results->append($this->extractResult($result));
         }
 
-        return $results->sortBy(fn(Match $match) => $match->date, SORT_ASC)->toArray(false);
+        return $results->sortBy(fn(Game $match) => $match->date, SORT_ASC)->toArray(false);
     }
 
     /**
@@ -46,7 +46,7 @@ class HandballService extends Service
         foreach ($decodedMatches as $match) {
             $date = new Chronos($match['Dato'] . ' ' . $match['Tid']);
 
-            $matches[] = new Match(
+            $matches[] = new Game(
                 $date->toMutable(),
                 strftime('%A', $date->getTimestamp()),
                 $date->format('H:i'),

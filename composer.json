@@ -15,7 +15,7 @@
         }
     },
     "require": {
-        "php": "7.4.*",
+        "php": "^8.0",
         "ext-imagick": "*",
         "ext-json": "*",
         "filp/whoops": "^2.7",

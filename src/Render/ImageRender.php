@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Render;
 
-use Avolle\UpcomingMatches\Match;
+use Avolle\UpcomingMatches\Game;
 use Avolle\UpcomingMatches\Render\Helper\ImageMatchesHelper;
 use Avolle\UpcomingMatches\Render\Helper\ImageSponsors;
 use Avolle\UpcomingMatches\Render\Helper\ImageTeamDetails;
@@ -163,7 +163,7 @@ class ImageRender implements RenderInterface
     private function groupByDate(CollectionInterface $matchesCollection): CollectionInterface
     {
         return $matchesCollection->groupBy(
-            fn(Match $match) => $match->day . strftime(' %d. %B', $match->date->getTimestamp())
+            fn(Game $match) => $match->day . strftime(' %d. %B', $match->date->getTimestamp())
         );
     }
 

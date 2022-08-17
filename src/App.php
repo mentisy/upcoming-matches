@@ -222,7 +222,7 @@ class App
     /**
      * Filter matches based on the sports configuration.
      *
-     * @param array<int, \Avolle\UpcomingMatches\Match> $matches Matches to use in filter
+     * @param array<int, \Avolle\UpcomingMatches\Game> $matches Matches to use in filter
      * @throws \Avolle\UpcomingMatches\Exception\InvalidFilterableException
      */
     protected function filterMatches(array $matches): array

@@ -6,11 +6,11 @@ namespace Avolle\UpcomingMatches;
 use DateTime;
 
 /**
- * Class Match
+ * Class Game
  *
  * @package Avolle\UpcomingMatches
  */
-class Match
+class Game
 {
     /**
      * Date of match
@@ -69,7 +69,7 @@ class Match
     public string $matchId;
 
     /**
-     * Match constructor.
+     * Game constructor.
      *
      * @param \DateTime $date Date
      * @param string $day Day

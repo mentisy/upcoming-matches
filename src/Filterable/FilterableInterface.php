@@ -10,7 +10,7 @@ interface FilterableInterface
     /**
      * Filter matches
      *
-     * @param array<int, \Avolle\UpcomingMatches\Match> $matches Matches to filter
+     * @param array<int, \Avolle\UpcomingMatches\Game> $matches Matches to filter
      * @param \Avolle\UpcomingMatches\SportConfig $sportConfig SportsConfig to use for filtering
      * @return array
      */

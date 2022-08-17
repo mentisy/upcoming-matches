@@ -1,6 +1,6 @@
 <?php
 /**
- * @var \Avolle\UpcomingMatches\Match[]|\Cake\Collection\CollectionInterface $matchesCollection
+ * @var \Avolle\UpcomingMatches\Game[]|\Cake\Collection\CollectionInterface $matchesCollection
  */
 ?>
 <table>
