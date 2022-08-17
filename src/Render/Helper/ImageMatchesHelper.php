@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Render\Helper;
 
-use Avolle\UpcomingMatches\Match;
+use Avolle\UpcomingMatches\Game;
 use Avolle\UpcomingMatches\Themes\Theme;
 use Cake\Collection\CollectionInterface;
 use Imagick;
@@ -264,10 +264,10 @@ class ImageMatchesHelper
      * Will also check for the longest string width, so that can be added to required width when cropping the image
      * Adds onto the required height property
      *
-     * @param \Avolle\UpcomingMatches\Match $match Match to render
+     * @param \Avolle\UpcomingMatches\Game $match Match to render
      * @throws \ImagickException
      */
-    private function renderMatch(Match $match): void
+    private function renderMatch(Game $match): void
     {
         $text = sprintf(
             "%s: %s - %s (%s - %s)",

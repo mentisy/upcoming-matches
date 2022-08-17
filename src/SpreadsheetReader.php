@@ -48,7 +48,7 @@ class SpreadsheetReader
     /**
      * An array of Match entities
      *
-     * @var \Avolle\UpcomingMatches\Match[]
+     * @var \Avolle\UpcomingMatches\Game[]
      */
     private array $matches;
 
@@ -90,7 +90,7 @@ class SpreadsheetReader
                 $dateValue = Date::excelToDateTimeObject(
                     $spreadsheet->getCell($this->cell($this->options['headers']['date'], $row))->getValue()
                 );
-                $matches[] = new Match(
+                $matches[] = new Game(
                     $dateValue,
                     $spreadsheet->getCell($this->cell($this->options['headers']['day'], $row))->getValue(),
                     $spreadsheet->getCell($this->cell($this->options['headers']['time'], $row))->getValue(),
@@ -147,7 +147,7 @@ class SpreadsheetReader
     /**
      * Returns the compiled array of Match entities
      *
-     * @return \Avolle\UpcomingMatches\Match[]
+     * @return \Avolle\UpcomingMatches\Game[]
      */
     public function getMatches(): array
     {
