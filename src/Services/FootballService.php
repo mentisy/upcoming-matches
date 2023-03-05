@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Avolle\UpcomingMatches\Services;
 
+use Avolle\UpcomingMatches\Game;
 use Avolle\UpcomingMatches\SpreadsheetReader;
 
 /**
@@ -29,7 +30,10 @@ class FootballService extends Service
             ));
         }
 
-        return $results->toArray(false);
+        return $results
+            ->sortBy(fn (Game $match) => $match->time, SORT_ASC)
+            ->sortBy(fn (Game $match) => $match->date, SORT_ASC)
+            ->toArray(false);
     }
 
     /**
