@@ -23,7 +23,10 @@ class HandballService extends Service
             $results = $results->append($this->extractResult($result));
         }
 
-        return $results->sortBy(fn(Game $match) => $match->date, SORT_ASC)->toArray(false);
+        return $results
+            ->sortBy(fn (Game $match) => $match->time, SORT_ASC)
+            ->sortBy(fn (Game $match) => $match->date, SORT_ASC)
+            ->toArray(false);
     }
 
     /**
