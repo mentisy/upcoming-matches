@@ -32,7 +32,7 @@ class SportConfig
     /**
      * Get a filterable class to use for filtering matches. Returns null if no filter is set
      *
-     * @return \Avolle\UpcomingMatches\Filterable\FilterableInterface
+     * @return \Avolle\UpcomingMatches\Filterable\FilterableInterface|null
      * @throws \Avolle\UpcomingMatches\Exception\InvalidFilterableException
      */
     public function getFilterableClass(): ?FilterableInterface
