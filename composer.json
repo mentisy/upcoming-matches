@@ -20,7 +20,7 @@
         "ext-json": "*",
         "filp/whoops": "^2.7",
         "guzzlehttp/guzzle": "^7.0",
-        "phpoffice/phpspreadsheet": "^1.14",
+        "phpoffice/phpspreadsheet": "^3.0",
         "cakephp/collection": "^4.1",
         "cakephp/chronos": "^2.0",
         "symfony/cache": "^5.1",
